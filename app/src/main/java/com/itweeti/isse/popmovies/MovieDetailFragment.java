@@ -32,12 +32,12 @@ import com.google.android.youtube.player.YouTubeStandalonePlayer;
 import com.itweeti.isse.popmovies.dummy.DummyContent;
 import com.itweeti.isse.popmovies.fragment.ReviewFragment;
 import com.itweeti.isse.popmovies.fragment.TrailerFragment;
-import com.itweeti.isse.popmovies.object.Config;
+import com.itweeti.isse.popmovies.Utils.Config;
 import com.itweeti.isse.popmovies.object.MyReviewRecyclerViewAdapter;
 import com.itweeti.isse.popmovies.object.MyTrailerExampleRecyclerViewAdapter;
 import com.itweeti.isse.popmovies.object.Reviews;
 import com.itweeti.isse.popmovies.object.Trailer;
-import com.itweeti.isse.popmovies.object.Utils;
+import com.itweeti.isse.popmovies.Utils.Utils;
 
 import org.json.JSONArray;
 import org.json.JSONException;

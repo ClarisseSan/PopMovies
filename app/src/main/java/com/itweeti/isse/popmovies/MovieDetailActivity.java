@@ -2,6 +2,8 @@ package com.itweeti.isse.popmovies;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.os.Parcelable;
+import android.os.PersistableBundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.view.MenuItemCompat;
 import android.support.v7.app.ActionBar;
@@ -12,6 +14,7 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.Toast;
 
 import com.android.volley.NoConnectionError;
 import com.android.volley.Request;
@@ -20,10 +23,10 @@ import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
-import com.itweeti.isse.popmovies.object.Config;
+import com.itweeti.isse.popmovies.Utils.Config;
 import com.itweeti.isse.popmovies.object.Reviews;
 import com.itweeti.isse.popmovies.object.Trailer;
-import com.itweeti.isse.popmovies.object.Utils;
+import com.itweeti.isse.popmovies.Utils.Utils;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -85,7 +88,41 @@ public class MovieDetailActivity extends AppCompatActivity {
         setSupportActionBar(toolbar);
 
 
+        intent = this.getIntent();
+
+        if (intent != null) {
+            movieId = intent.getStringExtra("movieId");
+            movieName = intent.getStringExtra("title");
+            flagData = intent.getIntExtra("flagData", 0);
+            Toast.makeText(this, LOG_TAG + " MY ID: " + movieId, Toast.LENGTH_SHORT).show();
+        }
+
+
+        if(savedInstanceState!=null) {
+            movieId = savedInstanceState.getString(STATE_ID);
+            flagData = savedInstanceState.getInt(STATE_DATA);
+            mTitle = savedInstanceState.getString(STATE_TITLE);
+            mYear = savedInstanceState.getString(STATE_YEAR);
+            mDuration = savedInstanceState.getString(STATE_DURATION);
+            mRating = savedInstanceState.getString(STATE_RATING);
+            vote_average = savedInstanceState.getFloat(STATE_VOTE);
+            mOverview = savedInstanceState.getString(STATE_OVERVIEW);
+            mPoster = savedInstanceState.getString(STATE_POSTER);
+        }
+
+
         fab = (FloatingActionButton) findViewById(R.id.fab);
+
+        try {
+            if(Utils.getFavoriteMovies(this)!=null){
+                checkMovieID();
+            }
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+
+
+
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -146,6 +183,21 @@ public class MovieDetailActivity extends AppCompatActivity {
         ActionBar actionBar = getSupportActionBar();
         if (actionBar != null) {
             actionBar.setDisplayHomeAsUpEnabled(true);
+
+            //set action bar title
+            getSupportActionBar().setTitle(movieName);
+        }
+
+        //request data from moviedb.org using API call or from shared preferences
+        switch (flagData){
+            case 0:
+                requestMovieDetail(movieId);
+                requestMovieTrailer(movieId);
+                requestMovieReviews(movieId);
+                break;
+            case 1:
+                getLocalData();
+                break;
         }
 
         // savedInstanceState is non-null when there is fragment state
@@ -160,9 +212,9 @@ public class MovieDetailActivity extends AppCompatActivity {
         if (savedInstanceState == null) {
             // Create the detail fragment and add it to the activity
             // using a fragment transaction.
-            Bundle arguments = new Bundle();
-            arguments.putString(MovieDetailFragment.ARG_ITEM_ID,
-                    getIntent().getStringExtra(MovieDetailFragment.ARG_ITEM_ID));
+            Bundle arguments = generateBundle();
+
+            arguments.putString(MovieDetailFragment.ARG_ITEM_ID, getIntent().getStringExtra(MovieDetailFragment.ARG_ITEM_ID));
             MovieDetailFragment fragment = new MovieDetailFragment();
             fragment.setArguments(arguments);
             getSupportFragmentManager().beginTransaction()
@@ -170,18 +222,28 @@ public class MovieDetailActivity extends AppCompatActivity {
                     .commit();
         }
 
-        //request data from moviedb.org using API call or from shared preferences
-        switch (flagData){
-            case 0:
-                requestMovieDetail(movieId);
-                requestMovieTrailer(movieId);
-                requestMovieReviews(movieId);
-                break;
-            case 1:
-                getLocalData();
-                break;
-        }
+
     }
+
+
+        private Bundle generateBundle() {
+            Bundle bundle = new Bundle();
+            bundle.putInt("flagData", flagData);
+            bundle.putString("movieId", movieId);
+            bundle.putString("title",mTitle);
+            bundle.putString("year", mYear);
+            bundle.putString("duration", mDuration);
+            bundle.putString("rating", mRating);
+            bundle.putFloat("vote_ave", vote_average);
+            bundle.putString("overview", mOverview);
+            bundle.putString("poster", mPoster);
+            bundle.putParcelableArrayList("review_list", (ArrayList<? extends Parcelable>) reviewList);
+            bundle.putParcelableArrayList("trailer_list", (ArrayList<? extends Parcelable>) movieTrailersList);
+
+            return bundle;
+        }
+
+
 
     private void saveAsFavorite(View view) throws JSONException {
 
@@ -208,7 +270,7 @@ public class MovieDetailActivity extends AppCompatActivity {
 
 
             int size = saveTrailers().length();
-            System.out.println("TRAILER SIZE " + size);
+            System.out.println("FAVORITE TRAILER SIZE " + size);
 
             //save favoriteMovie in a list
             Utils.saveFavoriteMovies(this,item, view);
@@ -314,6 +376,40 @@ public class MovieDetailActivity extends AppCompatActivity {
         List<Reviews> reviews = intent.getParcelableArrayListExtra("reviews");
         reviewList = reviews;
     }
+
+    @Override
+    public void onSaveInstanceState(Bundle outState, PersistableBundle outPersistentState) {
+        super.onSaveInstanceState(outState, outPersistentState);
+        // Save the current movieID state
+        outState.putString(STATE_ID, movieId);
+        outState.putInt(STATE_DATA, flagData);
+        outState.putString(STATE_TITLE, mTitle);
+        outState.putString(STATE_YEAR, mYear);
+        outState.putString(STATE_DURATION, mDuration);
+        outState.putString(STATE_RATING, mRating);
+        outState.putFloat(STATE_VOTE, vote_average);
+        outState.putString(STATE_OVERVIEW, mOverview);
+        outState.putString(STATE_POSTER, mPoster);
+    }
+
+
+
+    @Override
+    protected void onRestoreInstanceState(Bundle savedInstanceState) {
+        super.onRestoreInstanceState(savedInstanceState);
+
+        movieId = savedInstanceState.getString(STATE_ID);
+        flagData = savedInstanceState.getInt(STATE_DATA);
+        mTitle = savedInstanceState.getString(STATE_TITLE);
+        mYear = savedInstanceState.getString(STATE_YEAR);
+        mDuration = savedInstanceState.getString(STATE_DURATION);
+        mRating = savedInstanceState.getString(STATE_RATING);
+        vote_average = savedInstanceState.getFloat(STATE_VOTE);
+        mOverview = savedInstanceState.getString(STATE_OVERVIEW);
+        mPoster = savedInstanceState.getString(STATE_POSTER);
+
+    }
+
 
     private void requestMovieReviews(String movieId){
         //http://api.themoviedb.org/3/reviews/293660/videos?api_key=6d369d4e0676612d2d046b7f3e8424bd
@@ -657,4 +753,6 @@ public class MovieDetailActivity extends AppCompatActivity {
         }
         return super.onOptionsItemSelected(item);
     }
+
+
 }

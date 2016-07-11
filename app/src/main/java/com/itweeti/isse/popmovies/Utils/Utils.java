@@ -1,4 +1,4 @@
-package com.itweeti.isse.popmovies.object;
+package com.itweeti.isse.popmovies.Utils;
 
 import android.app.AlertDialog;
 import android.content.Context;
@@ -26,6 +26,12 @@ import java.net.URL;
 public class Utils {
 
     private static final String FAVORITES = "favorites" ;
+
+
+    // Suppress default constructor for noninstantiability
+    private Utils() {
+        throw new AssertionError();
+    }
 
     public static AlertDialog showSuccessDialog(final Context context, int title, int message) {
         // Creates a popup dialog

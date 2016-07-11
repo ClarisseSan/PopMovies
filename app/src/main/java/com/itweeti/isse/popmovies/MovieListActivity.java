@@ -32,10 +32,10 @@ import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
 import com.itweeti.isse.popmovies.activity.SettingsActivity;
 import com.itweeti.isse.popmovies.carousel.MainCarousel;
-import com.itweeti.isse.popmovies.object.Config;
+import com.itweeti.isse.popmovies.Utils.Config;
 import com.itweeti.isse.popmovies.object.GridSpacingItemDecoration;
 import com.itweeti.isse.popmovies.object.MovieImage;
-import com.itweeti.isse.popmovies.object.Utils;
+import com.itweeti.isse.popmovies.Utils.Utils;
 import com.squareup.picasso.Picasso;
 
 import org.json.JSONArray;
@@ -252,9 +252,10 @@ public class MovieListActivity extends AppCompatActivity {
         if (id==R.id.action_fav){
             //if movies are available in the favoriteList
             //then show FavoritesActivity
+
+
             try {
-                if (Utils.getFavoriteMovies(this).length()>0){
-                    //TODO: show favorites
+                if (Utils.getFavoriteMovies(this)!=null){
                     Intent intent = new Intent(this, MainCarousel.class);
                     startActivity(intent);
                 }else{

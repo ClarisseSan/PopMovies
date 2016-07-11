@@ -20,10 +20,10 @@ import com.android.volley.VolleyError;
 import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
 import com.itweeti.isse.popmovies.R;
-import com.itweeti.isse.popmovies.object.Config;
+import com.itweeti.isse.popmovies.Utils.Config;
 import com.itweeti.isse.popmovies.object.MyReviewRecyclerViewAdapter;
 import com.itweeti.isse.popmovies.object.Reviews;
-import com.itweeti.isse.popmovies.object.Utils;
+import com.itweeti.isse.popmovies.Utils.Utils;
 
 import org.json.JSONArray;
 import org.json.JSONException;

@@ -1,4 +1,4 @@
-package com.itweeti.isse.popmovies.object;
+package com.itweeti.isse.popmovies.Utils;
 
 /**
  * Created by isse on 27 Jun 2016.

@@ -33,7 +33,6 @@
 
         <activity
             android:name=".activity.SettingsActivity"
-            android:configChanges="orientation|keyboardHidden|screenSize"
             android:label="@string/title_activity_settings"
             android:parentActivityName=".MovieListActivity"
             android:theme="@style/AppTheme.NoActionBar" />
