@@ -19,9 +19,6 @@ import com.itweeti.isse.popmovies.object.FavoriteMovie;
 
 import java.util.ArrayList;
 
-/**
- * Created by isse on 29 Jun 2016.
- */
 public class CoverFlowAdapter extends BaseAdapter {
 
 
