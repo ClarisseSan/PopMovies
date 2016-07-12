@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools"
+<RelativeLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:paddingLeft="100dp"
@@ -18,7 +18,6 @@
         rotationThreshold="0.5"
         scalingThreshold="0.5"
         spacing="0.6"
-        android:background="@color/colorB6"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
 

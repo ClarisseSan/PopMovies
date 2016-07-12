@@ -1,4 +1,4 @@
-package com.itweeti.isse.popmovies;
+package com.itweeti.isse.popmovies.fragment;
 
 import android.app.Activity;
 import android.content.Intent;
@@ -29,15 +29,16 @@ import com.bumptech.glide.Glide;
 import com.google.android.youtube.player.YouTubeApiServiceUtil;
 import com.google.android.youtube.player.YouTubeInitializationResult;
 import com.google.android.youtube.player.YouTubeStandalonePlayer;
-import com.itweeti.isse.popmovies.dummy.DummyContent;
-import com.itweeti.isse.popmovies.fragment.ReviewFragment;
-import com.itweeti.isse.popmovies.fragment.TrailerFragment;
+import com.itweeti.isse.popmovies.R;
 import com.itweeti.isse.popmovies.Utils.Config;
+import com.itweeti.isse.popmovies.Utils.Utils;
+import com.itweeti.isse.popmovies.activity.MovieDetailActivity;
+import com.itweeti.isse.popmovies.activity.MovieListActivity;
+import com.itweeti.isse.popmovies.dummy.DummyContent;
 import com.itweeti.isse.popmovies.object.MyReviewRecyclerViewAdapter;
 import com.itweeti.isse.popmovies.object.MyTrailerExampleRecyclerViewAdapter;
 import com.itweeti.isse.popmovies.object.Reviews;
 import com.itweeti.isse.popmovies.object.Trailer;
-import com.itweeti.isse.popmovies.Utils.Utils;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -116,9 +117,7 @@ public class MovieDetailFragment extends Fragment {
 
     private int mColumnCount = 1;
     private Intent intent;
-
-
-
+    private TextView txtTrailer;
 
 
     /**
@@ -172,11 +171,9 @@ public class MovieDetailFragment extends Fragment {
             vote_average = savedInstanceState.getFloat(STATE_VOTE);
             mOverview = savedInstanceState.getString(STATE_OVERVIEW);
             mPoster = savedInstanceState.getString(STATE_POSTER);
-
             //TODO: include trailer and reviews
         }
 
-        setRetainInstance(true);
 
         //for allowing access in movie poster
         StrictMode.ThreadPolicy policy = new StrictMode.ThreadPolicy.Builder().permitAll().build();
@@ -204,6 +201,21 @@ public class MovieDetailFragment extends Fragment {
                 break;
         }
 
+    }
+
+    @Override
+    public void onSaveInstanceState(Bundle outState) {
+        super.onSaveInstanceState(outState);
+        // Save the current movieID state
+        outState.putString(STATE_ID, movieId);
+        outState.putInt(STATE_DATA, flagDataType);
+        outState.putString(STATE_TITLE, mTitle);
+        outState.putString(STATE_YEAR, mYear);
+        outState.putString(STATE_DURATION, mDuration);
+        outState.putString(STATE_RATING, mRating);
+        outState.putFloat(STATE_VOTE, vote_average);
+        outState.putString(STATE_OVERVIEW, mOverview);
+        outState.putString(STATE_POSTER, mPoster);
     }
 
     private void getLocalData() {
@@ -373,17 +385,20 @@ public class MovieDetailFragment extends Fragment {
 
                             }
 
-                            if (movieTrailersList!=null){
+                            if (movieTrailersList.size()!=0){
                                 for (Trailer trailer:movieTrailersList
                                         ) {
                                     System.out.println("TRAILER NUMBER-----------> " + trailer.getTrailerNumber());
                                 }
 
-                                trailerRecyclerView.getAdapter().notifyDataSetChanged();
+                                 trailerRecyclerView.getAdapter().notifyDataSetChanged();
 
                             }else {
+                                //no trailers fetched from API
                                 System.out.println(R.string.no_trailers);
+                                txtTrailer.setText(R.string.no_trailers);
                             }
+
 
                             trailerListAdapter.setItemList(movieTrailersList);
                             trailerListAdapter.notifyDataSetChanged();
@@ -539,8 +554,12 @@ public class MovieDetailFragment extends Fragment {
             trailerRecyclerView = (RecyclerView) rootView.findViewById(R.id.trailer_recyclerview);
             setTrailerRecyclerView(trailerRecyclerView);
 
+            //review list
             reviewRecvyclerView = (RecyclerView) rootView.findViewById(R.id.review_recyclerview);
             setReviewRecyclerView(reviewRecvyclerView);
+
+            //trailer label
+            txtTrailer = (TextView) rootView.findViewById(R.id.txt_trailer);
 
         }
 

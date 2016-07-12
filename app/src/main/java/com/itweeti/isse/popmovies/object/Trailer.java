@@ -12,10 +12,12 @@ public class Trailer implements Parcelable {
     String trailer_url;
 
 
+
     public Trailer(String trailer_number, String trailer_url){
         this.trailer_number = trailer_number;
         this.trailer_url = trailer_url;
     }
+
 
     protected Trailer(Parcel in) {
         trailer_number = in.readString();

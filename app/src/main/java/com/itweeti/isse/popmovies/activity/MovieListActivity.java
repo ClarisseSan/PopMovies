@@ -1,4 +1,4 @@
-package com.itweeti.isse.popmovies;
+package com.itweeti.isse.popmovies.activity;
 
 import android.content.Context;
 import android.content.Intent;
@@ -7,8 +7,6 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.preference.PreferenceManager;
 import android.support.annotation.NonNull;
-import android.support.design.widget.FloatingActionButton;
-import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -30,12 +28,13 @@ import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
-import com.itweeti.isse.popmovies.activity.SettingsActivity;
-import com.itweeti.isse.popmovies.carousel.MainCarousel;
+import com.itweeti.isse.popmovies.R;
 import com.itweeti.isse.popmovies.Utils.Config;
+import com.itweeti.isse.popmovies.Utils.Utils;
+import com.itweeti.isse.popmovies.carousel.MainCarousel;
+import com.itweeti.isse.popmovies.fragment.MovieDetailFragment;
 import com.itweeti.isse.popmovies.object.GridSpacingItemDecoration;
 import com.itweeti.isse.popmovies.object.MovieImage;
-import com.itweeti.isse.popmovies.Utils.Utils;
 import com.squareup.picasso.Picasso;
 
 import org.json.JSONArray;
@@ -81,14 +80,6 @@ public class MovieListActivity extends AppCompatActivity {
         setSupportActionBar(toolbar);
         toolbar.setTitle(getTitle());
 
-        FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
-        fab.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
-                        .setAction("Action", null).show();
-            }
-        });
 
 
         recyclerView = (RecyclerView) findViewById(R.id.movie_list);
@@ -255,7 +246,7 @@ public class MovieListActivity extends AppCompatActivity {
 
 
             try {
-                if (Utils.getFavoriteMovies(this)!=null){
+                if (Utils.getFavoriteMovies(this).length()>0){
                     Intent intent = new Intent(this, MainCarousel.class);
                     startActivity(intent);
                 }else{

@@ -1,4 +1,4 @@
-package com.itweeti.isse.popmovies;
+package com.itweeti.isse.popmovies.activity;
 
 import android.content.Intent;
 import android.os.Bundle;
@@ -23,6 +23,8 @@ import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
+import com.itweeti.isse.popmovies.fragment.MovieDetailFragment;
+import com.itweeti.isse.popmovies.R;
 import com.itweeti.isse.popmovies.Utils.Config;
 import com.itweeti.isse.popmovies.object.Reviews;
 import com.itweeti.isse.popmovies.object.Trailer;
@@ -614,6 +616,7 @@ public class MovieDetailActivity extends AppCompatActivity {
                             }
 
 
+
                             for (Trailer trailer:movieTrailersList
                                     ) {
                                 System.out.println("TRAILER NUMBER-----------> " + trailer.getTrailerNumber());
@@ -659,6 +662,15 @@ public class MovieDetailActivity extends AppCompatActivity {
         //attach an intent to this ShareActionProvider. You can update it anytime
         //like when the users select a pice of data they might like to share
         if (mShareActionProvider!=null){
+
+            //first trailer to send at share intent
+            if (movieTrailersList.size()!=0){
+                first_trailer_url = movieName + ": https://www.youtube.com/watch?v=" + movieTrailersList.get(0).getTrailerUrl();
+            }else{
+                //no trailer available, return movie name instead
+                first_trailer_url = movieName;
+            }
+
             mShareActionProvider.setShareIntent(createShareMovieIntent());
         }else{
             Log.e(LOG_TAG,"share action provider is null");
@@ -669,13 +681,6 @@ public class MovieDetailActivity extends AppCompatActivity {
 
     public Intent createShareMovieIntent() {
 
-        //first trailer to send at share intent
-        if (movieTrailersList.size()!=0){
-            first_trailer_url = movieName + ": https://www.youtube.com/watch?v=" + movieTrailersList.get(0).getTrailerUrl();
-        }else{
-            //no trailer available, return movie name instead
-            first_trailer_url = movieName;
-        }
 
 
         Intent shareIntent = new Intent(Intent.ACTION_SEND);
