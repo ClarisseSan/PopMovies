@@ -23,7 +23,7 @@ import java.net.MalformedURLException;
 import java.net.URL;
 
 
-public class Utils {
+public final class Utils {
 
     private static final String FAVORITES = "favorites" ;
 

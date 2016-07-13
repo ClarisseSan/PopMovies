@@ -3,7 +3,12 @@ package com.itweeti.isse.popmovies.Utils;
 /**
  * Created by isse on 27 Jun 2016.
  */
-public class Config {
+public final class Config {
+
+    // Suppress default constructor for noninstantiability
+    private Config() {
+        throw new AssertionError();
+    }
 
     // Google Console APIs developer key
     public static final String DEVELOPER_KEY = "AIzaSyBfS1diO_HpBW0eT2GLQDIwAnNyh1msNGM";
