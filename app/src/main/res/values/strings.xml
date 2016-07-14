@@ -17,4 +17,6 @@
     <string name="no_trailers">No trailers available</string>
     <string name="action_share">Share</string>
     <string name="fav_remove">Movie removed from favorites</string>
+        <string name="title_favorite_list">Favorites</string>
+    <string name="title_favorite_detail">Favorite Detail</string>
 </resources>

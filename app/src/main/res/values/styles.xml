@@ -21,6 +21,15 @@
         <style name="AppTheme.AppBarOverlay" parent="ThemeOverlay.AppCompat.Dark.ActionBar" />
         <style name="AppTheme.PopupOverlay" parent="ThemeOverlay.AppCompat.Light" />
 
+    <!-- Settings activity theme. -->
+    <style name="SettingsTheme" parent="@android:style/Theme.Holo.Light.DarkActionBar">
+        <item name="android:actionBarStyle">@style/ActionBar.PopMovies.NoTitle</item>
+    </style>
 
+    <!-- Settings activity action bar styles -->
+    <style name="ActionBar.PopMovies.NoTitle" parent="@android:style/Widget.Holo.Light.ActionBar.Solid.Inverse">
+        <item name="android:background">@color/colorPrimary</item>
+        <item name="android:height">56dp</item>
+    </style>
 
 </resources>
