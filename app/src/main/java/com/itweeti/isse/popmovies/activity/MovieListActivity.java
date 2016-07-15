@@ -29,10 +29,10 @@ import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
+import com.itweeti.isse.popmovies.FavoriteListActivity;
 import com.itweeti.isse.popmovies.R;
 import com.itweeti.isse.popmovies.Utils.Config;
 import com.itweeti.isse.popmovies.Utils.Utils;
-import com.itweeti.isse.popmovies.carousel.MainCarousel;
 import com.itweeti.isse.popmovies.fragment.MovieDetailFragment;
 import com.itweeti.isse.popmovies.object.GridSpacingItemDecoration;
 import com.itweeti.isse.popmovies.object.MovieImage;
@@ -250,7 +250,7 @@ public class MovieListActivity extends AppCompatActivity {
 
             try {
                 if (Utils.getFavoriteMovies(this).length()>0){
-                    Intent intent = new Intent(this, MainCarousel.class);
+                    Intent intent = new Intent(this, FavoriteListActivity.class);
                     startActivity(intent);
                 }else{
                     //inform user that no movies are added to favorites

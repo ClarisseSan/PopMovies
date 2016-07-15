@@ -19,26 +19,28 @@ import com.itweeti.isse.popmovies.object.FavoriteMovie;
 
 import java.util.ArrayList;
 
+//BaseAdapter
+
 public class CoverFlowAdapter extends BaseAdapter {
 
 
-    private ArrayList<FavoriteMovie> data;
+    private ArrayList<FavoriteMovie> movieList;
     private Context context;
 
     public CoverFlowAdapter(Context context, ArrayList<FavoriteMovie> objects) {
         this.context = context;
-        this.data = objects;
+        this.movieList = objects;
     }
 
 
     @Override
     public int getCount() {
-        return data.size();
+        return movieList.size();
     }
 
     @Override
     public FavoriteMovie getItem(int position) {
-        return data.get(position);
+        return movieList.get(position);
     }
 
     @Override
@@ -67,7 +69,7 @@ public class CoverFlowAdapter extends BaseAdapter {
 
 
         //set movie name
-        viewHolder.txtMovieName.setText(data.get(position).getMovie_name());
+        viewHolder.txtMovieName.setText(movieList.get(position).getMovie_name());
 
         convertView.setOnClickListener(onClickListener(position));
 
@@ -75,7 +77,7 @@ public class CoverFlowAdapter extends BaseAdapter {
     }
 
     private Bitmap decodeBase64Image(int position) {
-        byte[] decodedString = Base64.decode(data.get(position).getMovie_image(), Base64.DEFAULT);
+        byte[] decodedString = Base64.decode(movieList.get(position).getMovie_image(), Base64.DEFAULT);
         Bitmap decodedByte = BitmapFactory.decodeByteArray(decodedString, 0, decodedString.length);
 
         return decodedByte;
@@ -90,15 +92,15 @@ public class CoverFlowAdapter extends BaseAdapter {
                         Intent i = new Intent(context, MovieDetailActivity.class)
                         //pass the selected movie_id to the next Activity
                         .putExtra("flagData", 1)
-                        .putExtra("movieId", data.get(position).getMovie_id())
-                        .putExtra("title", data.get(position).getMovie_name())
-                        .putExtra("year", data.get(position).getMovie_date())
-                        .putExtra("rating", data.get(position).getMovie_vote())
-                        .putExtra("overview", data.get(position).getMovie_overview())
-                        .putExtra("poster", data.get(position).getMovie_image())
-                        .putExtra("duration", data.get(position).getMovie_duration())
-                        .putParcelableArrayListExtra("trailers", (ArrayList<? extends Parcelable>) data.get(position).getMovie_trailerList())
-                        .putParcelableArrayListExtra("reviews", (ArrayList<? extends Parcelable>) data.get(position).getReviewsList());
+                        .putExtra("movieId", movieList.get(position).getMovie_id())
+                        .putExtra("title", movieList.get(position).getMovie_name())
+                        .putExtra("year", movieList.get(position).getMovie_date())
+                        .putExtra("rating", movieList.get(position).getMovie_vote())
+                        .putExtra("overview", movieList.get(position).getMovie_overview())
+                        .putExtra("poster", movieList.get(position).getMovie_image())
+                        .putExtra("duration", movieList.get(position).getMovie_duration())
+                        .putParcelableArrayListExtra("trailers", (ArrayList<? extends Parcelable>) movieList.get(position).getMovie_trailerList())
+                        .putParcelableArrayListExtra("reviews", (ArrayList<? extends Parcelable>) movieList.get(position).getReviewsList());
 
                 context.startActivity(i);
 
@@ -108,7 +110,7 @@ public class CoverFlowAdapter extends BaseAdapter {
     }
 
     public void setItemList(ArrayList<FavoriteMovie> list) {
-        this.data = list;
+        this.movieList = list;
     }
 
 

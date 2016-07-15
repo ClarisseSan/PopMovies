@@ -1,6 +1,7 @@
 package com.itweeti.isse.popmovies.activity;
 
 import android.content.Intent;
+import android.graphics.Bitmap;
 import android.os.Bundle;
 import android.os.Parcelable;
 import android.os.PersistableBundle;
@@ -10,6 +11,7 @@ import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.ShareActionProvider;
 import android.support.v7.widget.Toolbar;
+import android.util.Base64;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -23,18 +25,21 @@ import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
-import com.itweeti.isse.popmovies.fragment.MovieDetailFragment;
 import com.itweeti.isse.popmovies.R;
 import com.itweeti.isse.popmovies.Utils.Config;
+import com.itweeti.isse.popmovies.Utils.Utils;
+import com.itweeti.isse.popmovies.fragment.MovieDetailFragment;
 import com.itweeti.isse.popmovies.object.Reviews;
 import com.itweeti.isse.popmovies.object.Trailer;
-import com.itweeti.isse.popmovies.Utils.Utils;
+import com.nostra13.universalimageloader.core.ImageLoader;
+import com.nostra13.universalimageloader.core.ImageLoaderConfiguration;
+import com.nostra13.universalimageloader.core.listener.SimpleImageLoadingListener;
 
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.net.MalformedURLException;
+import java.io.ByteArrayOutputStream;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -81,6 +86,8 @@ public class MovieDetailActivity extends AppCompatActivity {
     private List<Trailer> movieTrailersList;
 
     private Intent intent;
+    private String encodedString = "";
+    private ImageLoader imageLoader;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -202,6 +209,14 @@ public class MovieDetailActivity extends AppCompatActivity {
                 break;
         }
 
+        //initiliaze image loader)
+
+        if (imageLoader == null) {
+            imageLoader = ImageLoader.getInstance();
+            imageLoader.init(ImageLoaderConfiguration.createDefault(this));
+        }
+
+
         // savedInstanceState is non-null when there is fragment state
         // saved from previous configurations of this activity
         // (e.g. when rotating the screen from portrait to landscape).
@@ -223,6 +238,7 @@ public class MovieDetailActivity extends AppCompatActivity {
                     .add(R.id.movie_detail_container, fragment)
                     .commit();
         }
+
 
 
     }
@@ -247,6 +263,22 @@ public class MovieDetailActivity extends AppCompatActivity {
 
 
 
+    private void loadImageBitmap(String image_url){
+        imageLoader.loadImage(image_url, new SimpleImageLoadingListener() {
+            @Override
+            public void onLoadingComplete(String imageUri, View view, Bitmap loadedImage) {
+                // Do whatever you want with Bitmap
+
+                ByteArrayOutputStream byteArrayOS = new ByteArrayOutputStream();
+                loadedImage.compress(Bitmap.CompressFormat.JPEG, 100, byteArrayOS);
+
+                encodedString = Base64.encodeToString(byteArrayOS.toByteArray(), Base64.DEFAULT);
+            }
+        });
+    }
+
+
+
     private void saveAsFavorite(View view) throws JSONException {
 
         //generate JSON(itemlist) so php can process it
@@ -256,11 +288,8 @@ public class MovieDetailActivity extends AppCompatActivity {
             item.put("movie_name", mTitle);
 
             //save as base64 image
-            try {
-                item.put("movie_image", Utils.convertImageToBase64(mPoster));
-            } catch (MalformedURLException e) {
-                e.printStackTrace();
-            }
+            item.put("movie_image",encodedString);
+            Log.e("BASE64=========>", encodedString);
 
             item.put("movie_overview", mOverview);
             item.put("movie_year", mYear);
@@ -545,7 +574,7 @@ public class MovieDetailActivity extends AppCompatActivity {
                             Log.v("mOverview:>>>>>>>>>>>> ",mOverview);
                             Log.v("mPoster:>>>>>>>>>>>>>> ", mPoster);
 
-
+                            loadImageBitmap(mPoster);
 
                         } catch (JSONException e) {
                             e.printStackTrace();
@@ -680,9 +709,6 @@ public class MovieDetailActivity extends AppCompatActivity {
     }
 
     public Intent createShareMovieIntent() {
-
-
-
         Intent shareIntent = new Intent(Intent.ACTION_SEND);
         shareIntent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_WHEN_TASK_RESET);
         shareIntent.setType("text/plain");

@@ -125,6 +125,17 @@ public final class Utils {
         return encodedString;
     }
 
+    public static String  convertBitmapToBase64(Bitmap bitmap){
+        String encodedString = "";
+
+        ByteArrayOutputStream byteArrayOS = new ByteArrayOutputStream();
+        bitmap.compress(Bitmap.CompressFormat.JPEG, 100, byteArrayOS);
+
+        encodedString = Base64.encodeToString(byteArrayOS.toByteArray(), Base64.DEFAULT);
+
+        return encodedString;
+    }
+
 
     public static Bitmap decodeBase64Image(String base64String) {
         byte[] decodedString = Base64.decode(base64String, Base64.DEFAULT);

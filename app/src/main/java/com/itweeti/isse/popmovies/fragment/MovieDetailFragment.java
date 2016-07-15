@@ -189,17 +189,7 @@ public class MovieDetailFragment extends Fragment {
             result.getErrorDialog(getActivity(), 0).show();
         }
 
-        //request data from moviedb.org using API call or from shared preferences
-        switch (flagDataType){
-            case 0:
-                requestMovieDetail(movieId);
-                requestMovieTrailer(movieId);
-                requestMovieReviews(movieId);
-                break;
-            case 1:
-                getLocalData();
-                break;
-        }
+
 
     }
 
@@ -236,6 +226,9 @@ public class MovieDetailFragment extends Fragment {
         movieReviewList = new ArrayList<>();
         List<Reviews> reviews = intent.getParcelableArrayListExtra("reviews");
         movieReviewList = reviews;
+
+
+        setValuesOfView(mYear,mDuration,mOverview,vote_average,mPoster);
     }
 
     private void requestMovieReviews(String movieId) {
@@ -515,7 +508,6 @@ public class MovieDetailFragment extends Fragment {
                         .placeholder(R.drawable.ic_loading)
                         .fitCenter()
                         .error(R.drawable.ic_error)
-                        .crossFade()
                         .into(imgPoster);
                 break;
             case 1:
@@ -560,6 +552,19 @@ public class MovieDetailFragment extends Fragment {
 
             //trailer label
             txtTrailer = (TextView) rootView.findViewById(R.id.txt_trailer);
+
+            //request data from moviedb.org using API call or from shared preferences
+            switch (flagDataType){
+                case 0:
+                    requestMovieDetail(movieId);
+                    requestMovieTrailer(movieId);
+                    requestMovieReviews(movieId);
+                    break;
+                case 1:
+                    getLocalData();
+                    break;
+            }
+
 
         }
 
