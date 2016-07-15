@@ -249,7 +249,7 @@ public class MovieListActivity extends AppCompatActivity {
 
 
             try {
-                if (Utils.getFavoriteMovies(this).length()>0){
+                if (Utils.getFavoriteMovies(this)!=null){
                     Intent intent = new Intent(this, FavoriteListActivity.class);
                     startActivity(intent);
                 }else{

@@ -55,8 +55,9 @@ public class MyTrailerExampleRecyclerViewAdapter extends RecyclerView.Adapter<My
 
     @Override
     public int getItemCount() {
-
+        if(trailerList!=null)
         return trailerList.size();
+        return 0;
     }
 
     public class ViewHolder extends RecyclerView.ViewHolder {
