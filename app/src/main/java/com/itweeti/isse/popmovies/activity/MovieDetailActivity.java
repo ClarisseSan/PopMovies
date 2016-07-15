@@ -209,7 +209,7 @@ public class MovieDetailActivity extends AppCompatActivity {
                 break;
         }
 
-        //initiliaze image loader)
+        //initiliaze image loader
 
         if (imageLoader == null) {
             imageLoader = ImageLoader.getInstance();
