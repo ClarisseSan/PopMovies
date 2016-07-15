@@ -151,8 +151,6 @@ public class MovieDetailFragment extends Fragment {
             movieTrailersList = getArguments().getParcelableArrayList("trailer_list");
             movieReviewList = getArguments().getParcelableArrayList("review_list");
 
-
-
             Activity activity = this.getActivity();
             CollapsingToolbarLayout appBarLayout = (CollapsingToolbarLayout) activity.findViewById(R.id.toolbar_layout);
             if (appBarLayout != null) {
@@ -209,24 +207,37 @@ public class MovieDetailFragment extends Fragment {
     }
 
     private void getLocalData() {
-        flagDataType = intent.getIntExtra("flagData",0);
 
-        mTitle = intent.getStringExtra("title");
-        mYear = intent.getStringExtra("year");
-        mDuration = intent.getStringExtra("duration");
-        mRating = intent.getStringExtra("rating");
-        vote_average = Float.parseFloat(mRating)/2;
-        mOverview = intent.getStringExtra("overview");
-        mPoster = intent.getStringExtra("poster");
+        List<Trailer> trailers = null;
+        List<Reviews> reviews = null;
 
-        movieTrailersList = new ArrayList<>();
-        List<Trailer> trailers = intent.getParcelableArrayListExtra("trailers");
+        Bundle arguments = getArguments();
+        if (arguments.containsKey(ARG_ITEM_ID)) {
+            flagDataType = arguments.getInt("flagData",0);
+            mTitle = arguments.getString("title");
+            mYear = arguments.getString("year");
+            mDuration = arguments.getString("duration");
+            mRating = arguments.getString("rating");
+            vote_average = Float.parseFloat(mRating)/2;
+            mOverview = arguments.getString("overview");
+            mPoster = arguments.getString("poster");
+            trailers = arguments.getParcelableArrayList("trailers");
+            reviews = arguments.getParcelableArrayList("reviews");
+        } else {
+            flagDataType = intent.getIntExtra("flagData", 0);
+            mTitle = intent.getStringExtra("title");
+            mYear = intent.getStringExtra("year");
+            mDuration = intent.getStringExtra("duration");
+            mRating = intent.getStringExtra("rating");
+            vote_average = Float.parseFloat(mRating)/2;
+            mOverview = intent.getStringExtra("overview");
+            mPoster = intent.getStringExtra("poster");
+            trailers = intent.getParcelableArrayListExtra("trailers");
+            reviews = intent.getParcelableArrayListExtra("reviews");
+        }
+
         movieTrailersList = trailers;
-
-        movieReviewList = new ArrayList<>();
-        List<Reviews> reviews = intent.getParcelableArrayListExtra("reviews");
         movieReviewList = reviews;
-
 
         setValuesOfView(mYear,mDuration,mOverview,vote_average,mPoster);
     }
