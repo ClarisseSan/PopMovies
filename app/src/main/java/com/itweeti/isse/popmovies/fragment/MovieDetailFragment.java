@@ -184,7 +184,7 @@ public class MovieDetailFragment extends Fragment {
             result.getErrorDialog(getActivity(), 0).show();
         }
 
-
+        Log.v("HEHEHE - 1", "flagDataType  => " + flagDataType);
 
     }
 
@@ -284,18 +284,7 @@ public class MovieDetailFragment extends Fragment {
 
                             }
 
-                            //==============================LOGS=================================/
-
-
-                            if (movieReviewList!=null){
-                                for (Reviews review:movieReviewList) {
-                                    Log.d("AUTHOR: ",String.valueOf(review.getAuthor()));
-                                    Log.d("CONTENT: ",review.getContent());
-                                }
-                            }
-                            //====================================================================/
-
-                            if(movieReviewList.size()==0){
+                            if(movieReviewList.isEmpty()) {
                                 author = "No Reviews Available";
                                 content = " ";
 
@@ -307,11 +296,8 @@ public class MovieDetailFragment extends Fragment {
                             Log.d("Review list size ", String.valueOf(movieReviewList.size()));
 
                             //updates recyclerview once data is fetched from the API call
-                            reviewRecvyclerView.getAdapter().notifyDataSetChanged();
                             reviewListAdapter.setItemList(movieReviewList);
                             reviewListAdapter.notifyDataSetChanged();
-
-
 
                         } catch (JSONException e) {
                             e.printStackTrace();
@@ -333,16 +319,11 @@ public class MovieDetailFragment extends Fragment {
         // Add the request to the RequestQueue.
         queue.add(stringRequest);
 
-        reviewListAdapter = new ReviewRecyclerViewAdapter(movieReviewList,mReviewListener);
-
-
-
     }
 
     private void requestMovieTrailer(String movieId) {
 
         movieTrailersList = new ArrayList<>();
-
 
         final String BASE_PATH = "http://api.themoviedb.org/3/movie/";
         final String api_key = "?api_key=6d369d4e0676612d2d046b7f3e8424bd";
@@ -355,55 +336,39 @@ public class MovieDetailFragment extends Fragment {
         // Instantiate the RequestQueue.
         RequestQueue queue = Volley.newRequestQueue(getActivity());
 
-
         // Formulate the request and handle the response.
         StringRequest stringRequest = new StringRequest(Request.Method.GET, trailer_url,
                 new Response.Listener<String>() {
                     @Override
-                    public void onResponse(String response) {
+                    public void onResponse(String response)
+                    {
                         // Do something with the response
-                        System.out.println(response);
                         try {
+
                             JSONObject jsonObject = new JSONObject(response);
                             JSONArray results = jsonObject.getJSONArray("results");
 
-
-                            for (int i = 0; i < results.length(); i++) {
-
+                            for (int i = 0; i < results.length(); i++)
+                            {
                                 JSONObject obj = results.getJSONObject(i);
                                 String trailer_key = obj.getString("key");
                                 //String youtube_trailer = "https://www.youtube.com/watch?v=" + trailer_key;
                                 String youtube_trailer =  trailer_key;
                                 String trailer_num = "Trailer " + (i+1);
 
-                                System.out.println("TRAILER NUMBER --------->" + trailer_num);
-                                System.out.println("TRAILER URL --------->" + youtube_trailer);
-
                                 Trailer trailer = new Trailer(trailer_num, youtube_trailer);
 
-                                //save trailers in a list
+                                // save trailers in a list
                                 movieTrailersList.add(trailer);
-
                             }
 
-                            if (movieTrailersList.size()!=0){
-                                for (Trailer trailer:movieTrailersList
-                                        ) {
-                                    System.out.println("TRAILER NUMBER-----------> " + trailer.getTrailerNumber());
-                                }
-
-                                trailerRecyclerView.getAdapter().notifyDataSetChanged();
-
-                            }else {
-                                //no trailers fetched from API
-                                System.out.println(R.string.no_trailers);
+                            // no trailers fetched from API
+                            if (movieTrailersList.isEmpty()){
                                 txtTrailer.setText(R.string.no_trailers);
                             }
 
-
                             trailerListAdapter.setItemList(movieTrailersList);
                             trailerListAdapter.notifyDataSetChanged();
-                            Log.d("Trailer list size: ", String.valueOf(movieTrailersList.size()));
 
                         } catch (JSONException e) {
                             e.printStackTrace();
@@ -424,10 +389,6 @@ public class MovieDetailFragment extends Fragment {
 
         // Add the request to the RequestQueue.
         queue.add(stringRequest);
-
-        trailerListAdapter = new TrailerRecyclerViewAdapter(movieTrailersList,mTrailerListener);
-
-
     }
 
     private void requestMovieDetail(String movieId) {
@@ -533,6 +494,8 @@ public class MovieDetailFragment extends Fragment {
                              Bundle savedInstanceState) {
         View rootView = inflater.inflate(R.layout.movie_detail, container, false);
 
+        Log.v("HEHEHE - 1", "flagDataType=" + flagDataType+ "  movieId="+movieId);
+
         // Show the content
         if (movieId != null) {
             //Movie Release Year
@@ -586,9 +549,8 @@ public class MovieDetailFragment extends Fragment {
         } else {
             reviewRecvyclerView.setLayoutManager(new GridLayoutManager(getActivity(), mColumnCount));
         }
-        reviewRecvyclerView.setAdapter(new ReviewRecyclerViewAdapter(movieReviewList, mReviewListener));
-
-
+        reviewListAdapter = new ReviewRecyclerViewAdapter(movieReviewList,mReviewListener);
+        reviewRecvyclerView.setAdapter(reviewListAdapter);
     }
 
     private void setTrailerRecyclerView(RecyclerView trailer_recyclerView) {
@@ -599,7 +561,8 @@ public class MovieDetailFragment extends Fragment {
             trailer_recyclerView.setLayoutManager(new GridLayoutManager(getActivity(), mColumnCount));
         }
 
-        trailer_recyclerView.setAdapter(new TrailerRecyclerViewAdapter(movieTrailersList, mTrailerListener));
+        trailerListAdapter = new TrailerRecyclerViewAdapter(movieTrailersList, mTrailerListener);
+        trailer_recyclerView.setAdapter(trailerListAdapter);
 
 
         trailer_recyclerView.addOnItemTouchListener(new TrailerFragment.RecyclerTouchListener(getActivity(), trailer_recyclerView, new TrailerFragment.ClickListener() {
