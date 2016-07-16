@@ -38,22 +38,13 @@
             android:name=".carousel.MainCarousel"
             android:label="@string/fav" />
         <activity
-            android:name=".FavoriteListActivity"
+            android:name=".activity.FavoriteListActivity"
             android:label="@string/title_favorite_list"
             android:parentActivityName=".activity.MovieListActivity"
             android:theme="@style/AppTheme.NoActionBar">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value="com.itweeti.isse.popmovies.activity.MovieListActivity" />
-        </activity>
-        <activity
-            android:name=".FavoriteDetailActivity"
-            android:label="@string/title_favorite_detail"
-            android:parentActivityName=".FavoriteListActivity"
-            android:theme="@style/AppTheme.NoActionBar">
-            <meta-data
-                android:name="android.support.PARENT_ACTIVITY"
-                android:value="com.itweeti.isse.popmovies.FavoriteListActivity" />
         </activity>
     </application>
 

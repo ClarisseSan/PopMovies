@@ -1,4 +1,4 @@
-package com.itweeti.isse.popmovies.object;
+package com.itweeti.isse.popmovies.views.adapters;
 
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
@@ -8,16 +8,17 @@ import android.widget.TextView;
 
 import com.itweeti.isse.popmovies.R;
 import com.itweeti.isse.popmovies.fragment.TrailerFragment.OnListFragmentInteractionListener;
+import com.itweeti.isse.popmovies.models.Trailer;
 
 import java.util.List;
 
-public class MyTrailerExampleRecyclerViewAdapter extends RecyclerView.Adapter<MyTrailerExampleRecyclerViewAdapter.ViewHolder> {
+public class TrailerRecyclerViewAdapter extends RecyclerView.Adapter<TrailerRecyclerViewAdapter.ViewHolder> {
 
 
     private List<Trailer> trailerList;
     private final OnListFragmentInteractionListener mListener;
 
-    public MyTrailerExampleRecyclerViewAdapter(List<Trailer> trailers, OnListFragmentInteractionListener listener) {
+    public TrailerRecyclerViewAdapter(List<Trailer> trailers, OnListFragmentInteractionListener listener) {
         trailerList = trailers;
         mListener = listener;
     }

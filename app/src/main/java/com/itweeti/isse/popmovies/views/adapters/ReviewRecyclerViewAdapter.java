@@ -1,4 +1,4 @@
-package com.itweeti.isse.popmovies.object;
+package com.itweeti.isse.popmovies.views.adapters;
 
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
@@ -8,17 +8,18 @@ import android.widget.TextView;
 
 import com.itweeti.isse.popmovies.R;
 import com.itweeti.isse.popmovies.fragment.ReviewFragment.OnListFragmentInteractionListener;
+import com.itweeti.isse.popmovies.models.Reviews;
 
 import java.util.List;
 
-public class MyReviewRecyclerViewAdapter extends RecyclerView.Adapter<MyReviewRecyclerViewAdapter.ViewHolder> {
+public class ReviewRecyclerViewAdapter extends RecyclerView.Adapter<ReviewRecyclerViewAdapter.ViewHolder> {
 
     private List<Reviews> reviewsList;
     private final OnListFragmentInteractionListener mListener;
 
 
 
-    public MyReviewRecyclerViewAdapter(List<Reviews> items, OnListFragmentInteractionListener listener) {
+    public ReviewRecyclerViewAdapter(List<Reviews> items, OnListFragmentInteractionListener listener) {
         reviewsList = items;
         mListener = listener;
     }

@@ -1,4 +1,4 @@
-package com.itweeti.isse.popmovies;
+package com.itweeti.isse.popmovies.activity;
 
 import android.content.Context;
 import android.content.Intent;
@@ -21,13 +21,13 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-import com.itweeti.isse.popmovies.Utils.Utils;
-import com.itweeti.isse.popmovies.activity.MovieDetailActivity;
+import com.itweeti.isse.popmovies.R;
+import com.itweeti.isse.popmovies.utils.Utils;
 import com.itweeti.isse.popmovies.fragment.MovieDetailFragment;
-import com.itweeti.isse.popmovies.object.FavoriteMovie;
-import com.itweeti.isse.popmovies.object.GridSpacingItemDecoration;
-import com.itweeti.isse.popmovies.object.Reviews;
-import com.itweeti.isse.popmovies.object.Trailer;
+import com.itweeti.isse.popmovies.models.FavoriteMovie;
+import com.itweeti.isse.popmovies.views.adapters.gridview.GridSpacingItemDecoration;
+import com.itweeti.isse.popmovies.models.Reviews;
+import com.itweeti.isse.popmovies.models.Trailer;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -38,14 +38,7 @@ import java.util.List;
 
 import static android.support.v4.app.NavUtils.navigateUpFromSameTask;
 
-/**
- * An activity representing a list of Favorites. This activity
- * has different presentations for handset and tablet-size devices. On
- * handsets, the activity presents a list of items, which when touched,
- * lead to a {@link FavoriteDetailActivity} representing
- * item details. On tablets, the activity presents the list of items and
- * item details side-by-side using two vertical panes.
- */
+
 public class FavoriteListActivity extends AppCompatActivity {
 
     /**
@@ -309,7 +302,7 @@ public class FavoriteListActivity extends AppCompatActivity {
                     } else {
                         Context context = v.getContext();
                         Intent intent = new Intent(context, MovieDetailActivity.class);
-                        intent.putExtra(FavoriteDetailFragment.ARG_ITEM_ID, holder.mItem.getMovie_id())
+                        intent.putExtra(MovieDetailFragment.ARG_ITEM_ID, holder.mItem.getMovie_id())
                                 .putExtra("flagData", 1)
                                 .putExtra("movieId", holder.mItem.getMovie_id())
                                 .putExtra("title", holder.mItem.getMovie_name())

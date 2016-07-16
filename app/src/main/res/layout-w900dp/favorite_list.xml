@@ -11,7 +11,7 @@
     android:divider="?android:attr/dividerHorizontal"
     android:orientation="horizontal"
     android:showDividers="middle"
-    tools:context="com.itweeti.isse.popmovies.FavoriteListActivity">
+    tools:context=".activity.FavoriteListActivity">
 
     <!--
     This layout is a two-pane layout for the Favorites
@@ -28,7 +28,7 @@
         android:layout_marginLeft="5dp"
         android:layout_marginRight="5dp"
         app:layoutManager="LinearLayoutManager"
-        tools:context="com.itweeti.isse.popmovies.FavoriteListActivity"
+        tools:context=".activity.FavoriteListActivity"
         tools:listitem="@layout/movie_list_content"
         android:layout_weight="3"/>
 

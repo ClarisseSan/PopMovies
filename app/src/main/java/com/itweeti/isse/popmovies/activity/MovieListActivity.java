@@ -29,13 +29,12 @@ import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
-import com.itweeti.isse.popmovies.FavoriteListActivity;
 import com.itweeti.isse.popmovies.R;
-import com.itweeti.isse.popmovies.Utils.Config;
-import com.itweeti.isse.popmovies.Utils.Utils;
 import com.itweeti.isse.popmovies.fragment.MovieDetailFragment;
-import com.itweeti.isse.popmovies.object.GridSpacingItemDecoration;
-import com.itweeti.isse.popmovies.object.MovieImage;
+import com.itweeti.isse.popmovies.models.MovieImage;
+import com.itweeti.isse.popmovies.utils.Config;
+import com.itweeti.isse.popmovies.utils.Utils;
+import com.itweeti.isse.popmovies.views.adapters.gridview.GridSpacingItemDecoration;
 import com.squareup.picasso.Picasso;
 
 import org.json.JSONArray;

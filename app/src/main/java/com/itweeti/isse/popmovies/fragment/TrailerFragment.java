@@ -23,10 +23,10 @@ import com.android.volley.VolleyError;
 import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
 import com.itweeti.isse.popmovies.R;
-import com.itweeti.isse.popmovies.Utils.Config;
-import com.itweeti.isse.popmovies.object.MyTrailerExampleRecyclerViewAdapter;
-import com.itweeti.isse.popmovies.object.Trailer;
-import com.itweeti.isse.popmovies.Utils.Utils;
+import com.itweeti.isse.popmovies.utils.Config;
+import com.itweeti.isse.popmovies.views.adapters.TrailerRecyclerViewAdapter;
+import com.itweeti.isse.popmovies.models.Trailer;
+import com.itweeti.isse.popmovies.utils.Utils;
 import com.google.android.youtube.player.YouTubeApiServiceUtil;
 import com.google.android.youtube.player.YouTubeInitializationResult;
 import com.google.android.youtube.player.YouTubeStandalonePlayer;
@@ -57,7 +57,7 @@ public class TrailerFragment extends Fragment {
     private List<Trailer> movieTrailersList;
     private RecyclerView recyclerView;
 
-    private MyTrailerExampleRecyclerViewAdapter trailerListAdapter;
+    private TrailerRecyclerViewAdapter trailerListAdapter;
 
 
     // constant value of package & class name of YouTube app
@@ -146,7 +146,7 @@ public class TrailerFragment extends Fragment {
                 recyclerView.setLayoutManager(new GridLayoutManager(context, mColumnCount));
             }
 
-            recyclerView.setAdapter(new MyTrailerExampleRecyclerViewAdapter(movieTrailersList, mListener));
+            recyclerView.setAdapter(new TrailerRecyclerViewAdapter(movieTrailersList, mListener));
         }
 
         recyclerView.addOnItemTouchListener(new RecyclerTouchListener(getActivity(), recyclerView, new ClickListener() {
@@ -307,7 +307,7 @@ public class TrailerFragment extends Fragment {
         // Add the request to the RequestQueue.
         queue.add(stringRequest);
 
-        trailerListAdapter = new MyTrailerExampleRecyclerViewAdapter(movieTrailersList,mListener);
+        trailerListAdapter = new TrailerRecyclerViewAdapter(movieTrailersList,mListener);
     }
 
     public interface ClickListener {

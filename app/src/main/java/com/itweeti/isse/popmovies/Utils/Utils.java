@@ -1,4 +1,4 @@
-package com.itweeti.isse.popmovies.Utils;
+package com.itweeti.isse.popmovies.utils;
 
 import android.app.AlertDialog;
 import android.content.Context;

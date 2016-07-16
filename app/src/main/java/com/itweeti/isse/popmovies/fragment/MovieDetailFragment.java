@@ -30,15 +30,15 @@ import com.google.android.youtube.player.YouTubeApiServiceUtil;
 import com.google.android.youtube.player.YouTubeInitializationResult;
 import com.google.android.youtube.player.YouTubeStandalonePlayer;
 import com.itweeti.isse.popmovies.R;
-import com.itweeti.isse.popmovies.Utils.Config;
-import com.itweeti.isse.popmovies.Utils.Utils;
+import com.itweeti.isse.popmovies.utils.Config;
+import com.itweeti.isse.popmovies.utils.Utils;
 import com.itweeti.isse.popmovies.activity.MovieDetailActivity;
 import com.itweeti.isse.popmovies.activity.MovieListActivity;
-import com.itweeti.isse.popmovies.dummy.DummyContent;
-import com.itweeti.isse.popmovies.object.MyReviewRecyclerViewAdapter;
-import com.itweeti.isse.popmovies.object.MyTrailerExampleRecyclerViewAdapter;
-import com.itweeti.isse.popmovies.object.Reviews;
-import com.itweeti.isse.popmovies.object.Trailer;
+
+import com.itweeti.isse.popmovies.views.adapters.ReviewRecyclerViewAdapter;
+import com.itweeti.isse.popmovies.views.adapters.TrailerRecyclerViewAdapter;
+import com.itweeti.isse.popmovies.models.Reviews;
+import com.itweeti.isse.popmovies.models.Trailer;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -60,10 +60,6 @@ public class MovieDetailFragment extends Fragment {
      */
     public static final String ARG_ITEM_ID = "movieId";
 
-    /**
-     * The dummy content this fragment is presenting.
-     */
-    private DummyContent.DummyItem mItem;
 
     private static final String LOG_TAG = "OverviewFragment";
     private static final String STATE_ID = "movie_id" ;
@@ -97,15 +93,15 @@ public class MovieDetailFragment extends Fragment {
 
     //trailer variables
     private RecyclerView trailerRecyclerView;
-    private MyTrailerExampleRecyclerViewAdapter trailerListAdapter;
+    private TrailerRecyclerViewAdapter trailerListAdapter;
     private List<Trailer> movieTrailersList;
     private TrailerFragment.OnListFragmentInteractionListener mTrailerListener;
 
     //review variables
     private List<Reviews> movieReviewList;
     private RecyclerView reviewRecvyclerView;
-    private MyReviewRecyclerViewAdapter reviewListAdapter;
-   private ReviewFragment.OnListFragmentInteractionListener mReviewListener;
+    private ReviewRecyclerViewAdapter reviewListAdapter;
+    private ReviewFragment.OnListFragmentInteractionListener mReviewListener;
 
 
 
@@ -132,7 +128,7 @@ public class MovieDetailFragment extends Fragment {
         super.onCreate(savedInstanceState);
 
         intent = getActivity().getIntent();
-        
+
         if (getArguments().containsKey(ARG_ITEM_ID)) {
             // Load the dummy content specified by the fragment
             // arguments. In a real-world scenario, use a Loader
@@ -142,6 +138,7 @@ public class MovieDetailFragment extends Fragment {
             flagDataType = getArguments().getInt("flagData",0);
             movieId = getArguments().getString("movieId");
             mTitle = getArguments().getString("title");
+
             mYear = getArguments().getString("year");
             mDuration = getArguments().getString("duration");
             mRating = getArguments().getString("rating");
@@ -336,7 +333,7 @@ public class MovieDetailFragment extends Fragment {
         // Add the request to the RequestQueue.
         queue.add(stringRequest);
 
-        reviewListAdapter = new MyReviewRecyclerViewAdapter(movieReviewList,mReviewListener);
+        reviewListAdapter = new ReviewRecyclerViewAdapter(movieReviewList,mReviewListener);
 
 
 
@@ -395,7 +392,7 @@ public class MovieDetailFragment extends Fragment {
                                     System.out.println("TRAILER NUMBER-----------> " + trailer.getTrailerNumber());
                                 }
 
-                                 trailerRecyclerView.getAdapter().notifyDataSetChanged();
+                                trailerRecyclerView.getAdapter().notifyDataSetChanged();
 
                             }else {
                                 //no trailers fetched from API
@@ -428,7 +425,7 @@ public class MovieDetailFragment extends Fragment {
         // Add the request to the RequestQueue.
         queue.add(stringRequest);
 
-        trailerListAdapter = new MyTrailerExampleRecyclerViewAdapter(movieTrailersList,mTrailerListener);
+        trailerListAdapter = new TrailerRecyclerViewAdapter(movieTrailersList,mTrailerListener);
 
 
     }
@@ -589,7 +586,7 @@ public class MovieDetailFragment extends Fragment {
         } else {
             reviewRecvyclerView.setLayoutManager(new GridLayoutManager(getActivity(), mColumnCount));
         }
-        reviewRecvyclerView.setAdapter(new MyReviewRecyclerViewAdapter(movieReviewList, mReviewListener));
+        reviewRecvyclerView.setAdapter(new ReviewRecyclerViewAdapter(movieReviewList, mReviewListener));
 
 
     }
@@ -602,7 +599,7 @@ public class MovieDetailFragment extends Fragment {
             trailer_recyclerView.setLayoutManager(new GridLayoutManager(getActivity(), mColumnCount));
         }
 
-        trailer_recyclerView.setAdapter(new MyTrailerExampleRecyclerViewAdapter(movieTrailersList, mTrailerListener));
+        trailer_recyclerView.setAdapter(new TrailerRecyclerViewAdapter(movieTrailersList, mTrailerListener));
 
 
         trailer_recyclerView.addOnItemTouchListener(new TrailerFragment.RecyclerTouchListener(getActivity(), trailer_recyclerView, new TrailerFragment.ClickListener() {

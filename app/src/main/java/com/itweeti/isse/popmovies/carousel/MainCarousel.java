@@ -7,9 +7,9 @@ import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 
 import com.itweeti.isse.popmovies.R;
-import com.itweeti.isse.popmovies.object.FavoriteMovie;
-import com.itweeti.isse.popmovies.object.Reviews;
-import com.itweeti.isse.popmovies.object.Trailer;
+import com.itweeti.isse.popmovies.models.FavoriteMovie;
+import com.itweeti.isse.popmovies.models.Reviews;
+import com.itweeti.isse.popmovies.models.Trailer;
 
 import org.json.JSONArray;
 import org.json.JSONException;

@@ -26,11 +26,11 @@ import com.android.volley.VolleyError;
 import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
 import com.itweeti.isse.popmovies.R;
-import com.itweeti.isse.popmovies.Utils.Config;
-import com.itweeti.isse.popmovies.Utils.Utils;
+import com.itweeti.isse.popmovies.utils.Config;
+import com.itweeti.isse.popmovies.utils.Utils;
 import com.itweeti.isse.popmovies.fragment.MovieDetailFragment;
-import com.itweeti.isse.popmovies.object.Reviews;
-import com.itweeti.isse.popmovies.object.Trailer;
+import com.itweeti.isse.popmovies.models.Reviews;
+import com.itweeti.isse.popmovies.models.Trailer;
 import com.nostra13.universalimageloader.core.ImageLoader;
 import com.nostra13.universalimageloader.core.ImageLoaderConfiguration;
 import com.nostra13.universalimageloader.core.listener.SimpleImageLoadingListener;
@@ -84,10 +84,13 @@ public class MovieDetailActivity extends AppCompatActivity {
 
     private List<Reviews> reviewList;
     private List<Trailer> movieTrailersList;
+    private List<Trailer> trailers = new ArrayList<>();
+    private List<Reviews> reviews = new ArrayList<>();
 
     private Intent intent;
     private String encodedString = "";
     private ImageLoader imageLoader;
+    private List<Reviews> movieReviewList;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -104,6 +107,22 @@ public class MovieDetailActivity extends AppCompatActivity {
             movieName = intent.getStringExtra("title");
             flagData = intent.getIntExtra("flagData", 0);
             Toast.makeText(this, LOG_TAG + " MY ID: " + movieId, Toast.LENGTH_SHORT).show();
+
+            if (flagData == 1){
+                //from favorites get other extras from intent
+                mTitle = intent.getStringExtra("title");
+                mYear = intent.getStringExtra("year");
+                mDuration = intent.getStringExtra("duration");
+                mRating = intent.getStringExtra("rating");
+                vote_average = Float.parseFloat(mRating)/2;
+                mOverview = intent.getStringExtra("overview");
+                mPoster = intent.getStringExtra("poster");
+                trailers = intent.getParcelableArrayListExtra("trailers");
+                reviews = intent.getParcelableArrayListExtra("reviews");
+                movieTrailersList = trailers;
+                movieReviewList = reviews;
+            }
+
         }
 
 
@@ -204,9 +223,9 @@ public class MovieDetailActivity extends AppCompatActivity {
                 requestMovieTrailer(movieId);
                 requestMovieReviews(movieId);
                 break;
-            case 1:
-                getLocalData();
-                break;
+           // case 1:
+              //  getLocalData();
+               // break;
         }
 
         //initiliaze image loader

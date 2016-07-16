@@ -15,7 +15,7 @@ import android.widget.TextView;
 
 import com.itweeti.isse.popmovies.R;
 import com.itweeti.isse.popmovies.activity.MovieDetailActivity;
-import com.itweeti.isse.popmovies.object.FavoriteMovie;
+import com.itweeti.isse.popmovies.models.FavoriteMovie;
 
 import java.util.ArrayList;
 

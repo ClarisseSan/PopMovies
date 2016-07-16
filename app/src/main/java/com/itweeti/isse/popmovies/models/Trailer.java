@@ -1,4 +1,4 @@
-package com.itweeti.isse.popmovies.object;
+package com.itweeti.isse.popmovies.models;
 
 import android.os.Parcel;
 import android.os.Parcelable;

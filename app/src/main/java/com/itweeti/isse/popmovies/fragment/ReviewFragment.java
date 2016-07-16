@@ -20,10 +20,10 @@ import com.android.volley.VolleyError;
 import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
 import com.itweeti.isse.popmovies.R;
-import com.itweeti.isse.popmovies.Utils.Config;
-import com.itweeti.isse.popmovies.object.MyReviewRecyclerViewAdapter;
-import com.itweeti.isse.popmovies.object.Reviews;
-import com.itweeti.isse.popmovies.Utils.Utils;
+import com.itweeti.isse.popmovies.utils.Config;
+import com.itweeti.isse.popmovies.views.adapters.ReviewRecyclerViewAdapter;
+import com.itweeti.isse.popmovies.models.Reviews;
+import com.itweeti.isse.popmovies.utils.Utils;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -50,7 +50,7 @@ public class ReviewFragment extends Fragment {
     private List<Reviews> movieReviewList;
     private String movieId;
     private RecyclerView recyclerView;
-    private MyReviewRecyclerViewAdapter reviewListAdapter;
+    private ReviewRecyclerViewAdapter reviewListAdapter;
     private Intent intent;
     //if from api or local data
     //flagDataType = 0 --> from popular movies Activty
@@ -132,7 +132,7 @@ public class ReviewFragment extends Fragment {
             } else {
                 recyclerView.setLayoutManager(new GridLayoutManager(context, mColumnCount));
             }
-            recyclerView.setAdapter(new MyReviewRecyclerViewAdapter(movieReviewList, mListener));
+            recyclerView.setAdapter(new ReviewRecyclerViewAdapter(movieReviewList, mListener));
         }
         return view;
     }
@@ -275,7 +275,7 @@ public class ReviewFragment extends Fragment {
         // Add the request to the RequestQueue.
         queue.add(stringRequest);
 
-        reviewListAdapter = new MyReviewRecyclerViewAdapter(movieReviewList,mListener);
+        reviewListAdapter = new ReviewRecyclerViewAdapter(movieReviewList,mListener);
 
 
     }
