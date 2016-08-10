@@ -46,6 +46,12 @@
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value="com.itweeti.isse.popmovies.activity.MovieListActivity" />
         </activity>
+
+        <provider
+            android:authorities="com.itweeti.isse.popmovies"
+            android:name=".data.MovieProvider"
+            android:exported="false"
+            android:syncable="true"/>
     </application>
 
 </manifest>

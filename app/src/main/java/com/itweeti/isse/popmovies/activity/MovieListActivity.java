@@ -1,17 +1,25 @@
 package com.itweeti.isse.popmovies.activity;
 
+import android.content.ContentUris;
+import android.content.ContentValues;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.database.Cursor;
+import android.graphics.Bitmap;
+import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.preference.PreferenceManager;
-import android.support.annotation.NonNull;
+import android.support.v4.app.LoaderManager;
+import android.support.v4.content.CursorLoader;
+import android.support.v4.content.Loader;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
+import android.util.Base64;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -30,17 +38,23 @@ import com.android.volley.VolleyError;
 import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
 import com.itweeti.isse.popmovies.R;
+import com.itweeti.isse.popmovies.data.MovieContract;
+import com.itweeti.isse.popmovies.data.MovieHelper;
 import com.itweeti.isse.popmovies.fragment.MovieDetailFragment;
 import com.itweeti.isse.popmovies.models.MovieImage;
 import com.itweeti.isse.popmovies.utils.Config;
 import com.itweeti.isse.popmovies.utils.Utils;
 import com.itweeti.isse.popmovies.views.adapters.gridview.GridSpacingItemDecoration;
+import com.nostra13.universalimageloader.core.ImageLoader;
+import com.nostra13.universalimageloader.core.ImageLoaderConfiguration;
+import com.nostra13.universalimageloader.core.listener.SimpleImageLoadingListener;
 import com.squareup.picasso.Picasso;
 
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.io.ByteArrayOutputStream;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -52,7 +66,7 @@ import java.util.List;
  * item details. On tablets, the activity presents the list of items and
  * item details side-by-side using two vertical panes.
  */
-public class MovieListActivity extends AppCompatActivity {
+public class MovieListActivity extends AppCompatActivity implements LoaderManager.LoaderCallbacks<Cursor>{
 
     /**
      * Whether or not the activity is in two-pane mode, i.e. running on a tablet
@@ -71,10 +85,20 @@ public class MovieListActivity extends AppCompatActivity {
     private Handler handler;
 
 
+    private ImageLoader imageLoader;
+    private String encodedString = "";
+
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_movie_list);
+
+
+        //To actually create a database we have to call one of SQLitedatabase
+        // method getReadableDatabase() or getWritableDatabase().
+        MovieHelper movieHelper = new MovieHelper(this);
+        movieHelper.getWritableDatabase();
 
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
@@ -82,6 +106,14 @@ public class MovieListActivity extends AppCompatActivity {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
             toolbar.setElevation(0f);
         }
+
+        //initiliaze image loader
+
+        if (imageLoader == null) {
+            imageLoader = ImageLoader.getInstance();
+            imageLoader.init(ImageLoaderConfiguration.createDefault(this));
+        }
+
 
 
         recyclerView = (RecyclerView) findViewById(R.id.movie_list);
@@ -129,10 +161,56 @@ public class MovieListActivity extends AppCompatActivity {
 
         // getMovies();
         requestMovies();
+
+    }
+
+
+
+    String addMovie(long movieId, String title, String image) {
+
+        String id = String.valueOf(movieId);
+        String movie_id = "";
+
+        // First, check if the movieId exists in the db
+        Cursor locationCursor = this.getContentResolver().query(
+                MovieContract.DetailEntry.CONTENT_URI,
+                new String[]{ MovieContract.DetailEntry.COLUMN_MOVIE_ID},
+                MovieContract.DetailEntry.COLUMN_MOVIE_ID + " = ?",
+                new String[]{id},
+                null);
+
+        if (locationCursor.moveToFirst()) {
+            int movieIdIndex = locationCursor.getColumnIndex( MovieContract.DetailEntry.COLUMN_MOVIE_ID);
+            movie_id = locationCursor.getString(movieIdIndex);
+        } else {
+            // Now that the content provider is set up, inserting rows of data is pretty simple.
+            // First create a ContentValues object to hold the data you want to insert.
+            ContentValues movieValues = new ContentValues();
+
+            // Then add the data, along with the corresponding name of the data type,
+            // so the content provider knows what kind of value is being inserted.
+            movieValues.put(MovieContract.DetailEntry.COLUMN_MOVIE_ID, id);
+            movieValues.put(MovieContract.DetailEntry.COLUMN_TITLE, title);
+            movieValues.put(MovieContract.DetailEntry.COLUMN_POSTER, image);
+            // Finally, insert location data into the database.
+            Uri insertedUri = this.getContentResolver().insert(
+                    MovieContract.DetailEntry.CONTENT_URI,
+                    movieValues
+            );
+
+            // The resulting URI contains the ID for the row.  Extract the locationId from the Uri.
+            movie_id = String.valueOf(ContentUris.parseId(insertedUri));
+
+        }
+
+        locationCursor.close();
+        // Wait, that worked?  Yes!
+        return movie_id;
     }
 
     private void requestMovies() {
 
+        //http://api.themoviedb.org/3/movie/popular/?api_key=6d369d4e0676612d2d046b7f3e8424bd
         final String BASE_PATH = "http://api.themoviedb.org/3/movie/";
         final String sort_order = sortOption;
         final String api_key = "?api_key=" + Config.API_KEY;;
@@ -168,6 +246,7 @@ public class MovieListActivity extends AppCompatActivity {
                                 String movie_name = obj.getString("title");
                                 String movie_image = obj.getString("poster_path");
 
+
                                 //save the images to a String array
                                 //You will need to append a base path ahead of this relative path to build
                                 //the complete url you will need to fetch the image using Picasso.
@@ -186,6 +265,13 @@ public class MovieListActivity extends AppCompatActivity {
                                 Log.v("xxxxx-add", "adding movie: " + movie_name);
 
                                 movieImages.add(posterPath);
+
+
+
+                                loadImageBitmap(posterPath);
+
+                                //add movie to database
+                                addMovie(movie_id,movie_name,posterPath);
                             }
 
 
@@ -223,6 +309,22 @@ public class MovieListActivity extends AppCompatActivity {
 
         // Add the request to the RequestQueue.
         queue.add(stringRequest);
+    }
+
+    private void loadImageBitmap(String image_url){
+
+        imageLoader.loadImage(image_url, new SimpleImageLoadingListener() {
+            @Override
+            public void onLoadingComplete(String imageUri, View view, Bitmap loadedImage) {
+                // Do whatever you want with Bitmap
+
+                ByteArrayOutputStream byteArrayOS = new ByteArrayOutputStream();
+                loadedImage.compress(Bitmap.CompressFormat.JPEG, 100, byteArrayOS);
+
+                 encodedString = Base64.encodeToString(byteArrayOS.toByteArray(), Base64.DEFAULT);
+            }
+        });
+
     }
 
     @Override
@@ -265,9 +367,35 @@ public class MovieListActivity extends AppCompatActivity {
         return super.onOptionsItemSelected(item);
     }
 
-    private void setupRecyclerView(@NonNull RecyclerView recyclerView) {
+    private void setupRecyclerView(RecyclerView recyclerView) {
         mAdapter =  new MovieItemRecyclerViewAdapter(this, movieImages, list);
         recyclerView.setAdapter(mAdapter);}
+
+
+
+
+
+    @Override
+    public Loader<Cursor> onCreateLoader(int id, Bundle args) {
+        // Attach loader to our  database query
+        // run when loader is initialized
+        return new CursorLoader(this,
+                MovieContract.DetailEntry.CONTENT_URI,
+                null,
+                null,
+                null,
+                null);
+    }
+
+    @Override
+    public void onLoadFinished(Loader<Cursor> loader, Cursor data) {
+
+    }
+
+    @Override
+    public void onLoaderReset(Loader<Cursor> loader) {
+
+    }
 
     public class MovieItemRecyclerViewAdapter
             extends RecyclerView.Adapter<MovieItemRecyclerViewAdapter.ViewHolder> {
@@ -305,7 +433,6 @@ public class MovieListActivity extends AppCompatActivity {
             //set movie name to textView
             holder.mTitleView.setText(movieImages.get(position).getMovie_name());
 
-            //TODO: add onclick listener for poster
 
             holder.mView.setOnClickListener(new View.OnClickListener() {
                 @Override

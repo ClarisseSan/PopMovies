@@ -39,8 +39,7 @@ public final class MovieContract {
         public static final String COLUMN_RATING = "rating";
         public static final String COLUMN_OVERVIEW = "overview";
         public static final String COLUMN_POSTER = "poster";
-        public static final String COLUMN_TRAILER = "trailers";
-        public static final String COLUMN_REVIEW = "reviews";
+        public static final String COLUMN_VIEWED = "viewed";
 
 
 
@@ -52,7 +51,7 @@ public final class MovieContract {
         // create cursor of base type item for single entry
         public static final String CONTENT_ITEM_TYPE = ContentResolver.CURSOR_ITEM_BASE_TYPE +"/" + CONTENT_AUTHORITY + "/" + TABLE_DETAIL;
 
-        // for building URIs on insertion
+        // for building URIs with ID
         public static Uri buildDetailsUri(long id){
             return ContentUris.withAppendedId(CONTENT_URI, id);
         }
@@ -114,7 +113,8 @@ public final class MovieContract {
         //TRAILER TABLE
         public static final String COLUMN_MOVIE_ID = "movie_id";
         public static final String TABLE_FAVORITE = "favorite_tbl";
-        public static final String COLUMN_TITLE = "title";;
+        public static final String COLUMN_TITLE = "title";
+        public static final String COLUMN_IMAGE = "encoded_image";
 
 
         // create content uri

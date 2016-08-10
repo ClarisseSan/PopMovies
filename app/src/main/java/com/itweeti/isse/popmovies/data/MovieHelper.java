@@ -17,10 +17,11 @@ import android.util.Log;
 public class MovieHelper extends SQLiteOpenHelper {
 
     private static final String DATABASE_NAME = "movie.db";
-    private static final int DATABASE_VERSION = 4;
+    private static final int DATABASE_VERSION = 8;
 
     private static final String TEXT_TYPE = " TEXT";
     private static final String BLOB_TYPE = " BLOB";
+    private static final String INTEGER_TYPE = " INTEGER DEFAULT 0";
     private static final String COMMA_SEP = ",";
 
     /* query for creating detail_tbl*/
@@ -33,7 +34,9 @@ public class MovieHelper extends SQLiteOpenHelper {
                     MovieContract.DetailEntry.COLUMN_DURATION + TEXT_TYPE + COMMA_SEP +
                     MovieContract.DetailEntry.COLUMN_RATING + TEXT_TYPE + COMMA_SEP +
                     MovieContract.DetailEntry.COLUMN_OVERVIEW + TEXT_TYPE + COMMA_SEP +
-                    MovieContract.DetailEntry.COLUMN_POSTER + BLOB_TYPE +
+                    MovieContract.DetailEntry.COLUMN_POSTER + BLOB_TYPE + COMMA_SEP +
+                    MovieContract.DetailEntry.COLUMN_VIEWED + INTEGER_TYPE +
+
                     " )";
 
 
@@ -60,7 +63,8 @@ public class MovieHelper extends SQLiteOpenHelper {
             "CREATE TABLE " + MovieContract.FavoriteEntry.TABLE_FAVORITE + " (" +
                     MovieContract.FavoriteEntry._ID + " INTEGER PRIMARY KEY," +
                     MovieContract.FavoriteEntry.COLUMN_MOVIE_ID + TEXT_TYPE + COMMA_SEP +
-                    MovieContract.FavoriteEntry.COLUMN_TITLE + TEXT_TYPE +
+                    MovieContract.FavoriteEntry.COLUMN_TITLE + TEXT_TYPE + COMMA_SEP +
+                    MovieContract.FavoriteEntry.COLUMN_IMAGE + TEXT_TYPE +
                     " )";
 
 
@@ -121,13 +125,14 @@ public class MovieHelper extends SQLiteOpenHelper {
 
 
     // Adding new favorites to TABLE_FAVORITE
-    public void addMovieAsFavorite(String movieId, String title) {
+    public void addMovieAsFavorite(String movieId, String title, String image) {
         SQLiteDatabase db = this.getWritableDatabase();
 
 
         ContentValues detailValues = new ContentValues();
         detailValues.put(MovieContract.FavoriteEntry.COLUMN_MOVIE_ID, movieId);
         detailValues.put(MovieContract.FavoriteEntry.COLUMN_TITLE, title);
+        detailValues.put(MovieContract.FavoriteEntry.COLUMN_IMAGE, image);
 
         // Inserting Row
         db.insert(MovieContract.FavoriteEntry.TABLE_FAVORITE, null, detailValues);
@@ -194,11 +199,7 @@ public class MovieHelper extends SQLiteOpenHelper {
 
     public void removeFromFavorites(String movieId) {
         SQLiteDatabase db = this.getWritableDatabase();
-        db.delete(MovieContract.DetailEntry.TABLE_DETAIL, MovieContract.DetailEntry.COLUMN_MOVIE_ID + " = ?",
-                new String[]{String.valueOf(movieId)});
-        db.delete(MovieContract.ReviewEntry.TABLE_REVIEW, MovieContract.DetailEntry.COLUMN_MOVIE_ID + " = ?",
-                new String[]{String.valueOf(movieId)});
-        db.delete(MovieContract.TrailerEntry.TABLE_TRAILER, MovieContract.DetailEntry.COLUMN_MOVIE_ID + " = ?",
+        db.delete(MovieContract.FavoriteEntry.TABLE_FAVORITE, MovieContract.FavoriteEntry.COLUMN_MOVIE_ID + " = ?",
                 new String[]{String.valueOf(movieId)});
 
         db.close();

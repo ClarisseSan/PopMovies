@@ -1,7 +1,10 @@
 package com.itweeti.isse.popmovies.activity;
 
+import android.content.ContentValues;
 import android.content.Intent;
+import android.database.Cursor;
 import android.graphics.Bitmap;
+import android.net.Uri;
 import android.os.Bundle;
 import android.os.Parcelable;
 import android.os.PersistableBundle;
@@ -26,11 +29,13 @@ import com.android.volley.VolleyError;
 import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
 import com.itweeti.isse.popmovies.R;
-import com.itweeti.isse.popmovies.utils.Config;
-import com.itweeti.isse.popmovies.utils.Utils;
+import com.itweeti.isse.popmovies.data.MovieContract;
+import com.itweeti.isse.popmovies.data.MovieHelper;
 import com.itweeti.isse.popmovies.fragment.MovieDetailFragment;
 import com.itweeti.isse.popmovies.models.Reviews;
 import com.itweeti.isse.popmovies.models.Trailer;
+import com.itweeti.isse.popmovies.utils.Config;
+import com.itweeti.isse.popmovies.utils.Utils;
 import com.nostra13.universalimageloader.core.ImageLoader;
 import com.nostra13.universalimageloader.core.ImageLoaderConfiguration;
 import com.nostra13.universalimageloader.core.listener.SimpleImageLoadingListener;
@@ -100,6 +105,8 @@ public class MovieDetailActivity extends AppCompatActivity {
         setSupportActionBar(toolbar);
 
 
+        final MovieHelper db = new MovieHelper(this);
+
         intent = this.getIntent();
 
         if (intent != null) {
@@ -164,6 +171,8 @@ public class MovieDetailActivity extends AppCompatActivity {
                         //add MOVIEID to the list
                         try {
                             saveAsFavorite(view);
+                            //save to sqlite database
+                            db.addMovieAsFavorite(movieId,mTitle,encodedString);
                         } catch (JSONException e) {
                             e.printStackTrace();
                         }
@@ -260,8 +269,63 @@ public class MovieDetailActivity extends AppCompatActivity {
 
 
 
+
+
+
+
     }
 
+    private void updateTableDetail(long movieId, String title, String year, String duration, String rating, String overview, String poster) {
+        String id = String.valueOf(movieId);
+        String movie_id = "";
+
+        //TODO: update the COLUMN_VIEWED to "1" on TABLE_DETAIL where movieID = ?
+        // First, check if the view is 0
+        Cursor cursor = this.getContentResolver().query(
+                MovieContract.DetailEntry.CONTENT_URI,
+                null,
+                MovieContract.DetailEntry.COLUMN_MOVIE_ID + " = ?",
+                new String[]{id},
+                null);
+
+        if (cursor.moveToFirst()) {
+            int movieIdIndex = cursor.getColumnIndex(MovieContract.DetailEntry.COLUMN_MOVIE_ID);
+            movie_id = cursor.getString(movieIdIndex);
+
+            int viewedIndex = cursor.getColumnIndex( MovieContract.DetailEntry.COLUMN_VIEWED);
+            int viewed = cursor.getInt(viewedIndex);
+
+            if(viewed==0){
+                //update
+                ContentValues movieValues = new ContentValues();
+
+                // Then add the data, along with the corresponding name of the data type,
+                // so the content provider knows what kind of value is being inserted.
+                movieValues.put(MovieContract.DetailEntry.COLUMN_MOVIE_ID, id);
+                movieValues.put(MovieContract.DetailEntry.COLUMN_TITLE, title);
+                movieValues.put(MovieContract.DetailEntry.COLUMN_YEAR, year);
+                movieValues.put(MovieContract.DetailEntry.COLUMN_DURATION, duration);
+                movieValues.put(MovieContract.DetailEntry.COLUMN_RATING, rating);
+                movieValues.put(MovieContract.DetailEntry.COLUMN_OVERVIEW, overview);
+                movieValues.put(MovieContract.DetailEntry.COLUMN_VIEWED, 1);
+                movieValues.put(MovieContract.DetailEntry.COLUMN_POSTER, poster);
+
+                //Uri with ID
+                Uri uri = MovieContract.DetailEntry.buildDetailsUri(movieId);
+
+                // Finally, update detail data into the database.
+                this.getContentResolver().update(
+                        uri,
+                        movieValues,
+                        MovieContract.DetailEntry.COLUMN_MOVIE_ID + " = ?",//with a movie id of ?
+                        new String[]{id}
+                );
+
+
+                cursor.close();
+            }
+        }
+    }
 
         private Bundle generateBundle() {
             Bundle bundle = new Bundle();
@@ -546,11 +610,11 @@ public class MovieDetailActivity extends AppCompatActivity {
 
     }
 
-    private void requestMovieDetail(String movieId) {
+    private void requestMovieDetail(final String movieId) {
 
         final String BASE_PATH = "http://api.themoviedb.org/3/movie/";
         final String api_key = "?api_key=" + Config.API_KEY;
-        String id = movieId;
+        final String id = movieId;
 
 
         final String original_url = BASE_PATH + id + api_key;
@@ -592,6 +656,8 @@ public class MovieDetailActivity extends AppCompatActivity {
                             Log.v("mRating:>>>>>>>>>>>>>> ",mRating);
                             Log.v("mOverview:>>>>>>>>>>>> ",mOverview);
                             Log.v("mPoster:>>>>>>>>>>>>>> ", mPoster);
+
+                            updateTableDetail(Long.parseLong(id),mTitle,mYear,mDuration,mRating,mOverview,mPoster);
 
                             loadImageBitmap(mPoster);
 
