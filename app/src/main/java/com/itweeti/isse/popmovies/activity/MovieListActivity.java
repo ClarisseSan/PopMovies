@@ -89,6 +89,7 @@ public class MovieListActivity extends AppCompatActivity implements LoaderManage
     private String encodedString = "";
 
 
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);

@@ -101,7 +101,7 @@ public final class MovieContract {
         public static final String CONTENT_ITEM_TYPE = ContentResolver.CURSOR_ITEM_BASE_TYPE +"/" + CONTENT_AUTHORITY + "/" + TABLE_TRAILER;
 
         // for building URIs on insertion
-        public static Uri builTrailerUri(long id){
+        public static Uri buildTrailerUri(long id){
             return ContentUris.withAppendedId(CONTENT_URI, id);
         }
 
@@ -111,9 +111,8 @@ public final class MovieContract {
     /* Inner class that defines the Favorite table contents */
     public static  abstract class FavoriteEntry implements BaseColumns{
         //TRAILER TABLE
-        public static final String COLUMN_MOVIE_ID = "movie_id";
         public static final String TABLE_FAVORITE = "favorite_tbl";
-        public static final String COLUMN_TITLE = "title";
+        public static final String COLUMN_MOVIE_ID = "movie_id";
         public static final String COLUMN_IMAGE = "encoded_image";
 
 

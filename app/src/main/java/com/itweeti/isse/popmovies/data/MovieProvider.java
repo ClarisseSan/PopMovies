@@ -29,9 +29,10 @@ public class MovieProvider extends ContentProvider {
     private static final int FAVORITE = 3;
     private static final int FAVORITE_WITH_ID = 4;
 
-    private static final int DETAIL_UPDATE_VIEW_WITH_ID = 5;
+    private static final int TRAILER = 5;
+    private static final int REVIEWS = 6;
 
-    ////////
+
 
     private static UriMatcher buildUriMatcher(){
         // Build a UriMatcher by adding a specific code to return based on a match
@@ -46,11 +47,15 @@ public class MovieProvider extends ContentProvider {
 
         //URI for favorites
         matcher.addURI(authority, MovieContract.FavoriteEntry.TABLE_FAVORITE, FAVORITE);
+
         matcher.addURI(authority, MovieContract.FavoriteEntry.TABLE_FAVORITE + "/#", FAVORITE_WITH_ID);
 
-        //URI for update Detail table
-        matcher.addURI(authority, MovieContract.DetailEntry.TABLE_DETAIL + "/update/view/#", DETAIL_UPDATE_VIEW_WITH_ID);
+        //URI for insert Trailer table
+        //content://com.itweeti.isse.popmovies/trailer_tbl
+        matcher.addURI(authority, MovieContract.TrailerEntry.TABLE_TRAILER, TRAILER);
 
+        //URI for reviews
+        matcher.addURI(authority, MovieContract.ReviewEntry.TABLE_REVIEW, REVIEWS);
         return matcher;
     }
 
@@ -80,6 +85,7 @@ public class MovieProvider extends ContentProvider {
                         null,
                         sortOrder);
                 return retCursor;
+
             }
             // Individual flavor based on Id selected
             case DETAIL_WITH_ID:{
@@ -92,6 +98,7 @@ public class MovieProvider extends ContentProvider {
                         null,
                         sortOrder);
                 return retCursor;
+
             }
 
             case FAVORITE:{
@@ -122,6 +129,33 @@ public class MovieProvider extends ContentProvider {
             }
 
 
+
+            case TRAILER: {
+                //readableDatabase because you're ony gonna fetch data
+                retCursor = mOpenHelper.getReadableDatabase().query(
+                        MovieContract.TrailerEntry.TABLE_TRAILER,
+                        projection,
+                        selection,
+                        selectionArgs,
+                        null,
+                        null,
+                        sortOrder);
+                return retCursor;
+            }
+
+            case REVIEWS: {
+                //readableDatabase because you're ony gonna fetch data
+                retCursor = mOpenHelper.getReadableDatabase().query(
+                        MovieContract.ReviewEntry.TABLE_REVIEW,
+                        projection,
+                        selection,
+                        selectionArgs,
+                        null,
+                        null,
+                        sortOrder);
+                return retCursor;
+            }
+
             default:{
                 // By default, we assume a bad URI
                 throw new UnsupportedOperationException("Unknown uri: " + uri);
@@ -138,7 +172,7 @@ public class MovieProvider extends ContentProvider {
 
         switch (match){
             case DETAIL:{
-                //returns all movie
+                //returns all movies
                 return MovieContract.DetailEntry.CONTENT_DIR_TYPE;
             }
             case DETAIL_WITH_ID:{
@@ -146,12 +180,22 @@ public class MovieProvider extends ContentProvider {
                 return MovieContract.DetailEntry.CONTENT_ITEM_TYPE;
             }
             case FAVORITE:{
-                //returns all movie
+                //returns all favorite movies
                 return MovieContract.FavoriteEntry.CONTENT_DIR_TYPE;
             }
             case FAVORITE_WITH_ID:{
-                //return a movie with the id
+                //return a favorite movie with the id
                 return MovieContract.FavoriteEntry.CONTENT_ITEM_TYPE;
+            }
+
+            case TRAILER:{
+                //returns all trailers
+                return MovieContract.TrailerEntry.CONTENT_DIR_TYPE;
+            }
+
+            case REVIEWS:{
+                //returns all reviews
+                return MovieContract.ReviewEntry.CONTENT_DIR_TYPE;
             }
             default:{
                 throw new UnsupportedOperationException("Unknown uri: " + uri);
@@ -181,6 +225,40 @@ public class MovieProvider extends ContentProvider {
                 break;
             }
 
+            case TRAILER:{
+                long _id = db.insert(MovieContract.TrailerEntry.TABLE_TRAILER, null, contentValues);
+                // insert unless it is already contained in the database
+                if (_id > 0) {
+                    returnUri = MovieContract.TrailerEntry.buildTrailerUri(_id);
+                } else {
+                    throw new android.database.SQLException("Failed to insert row into: " + uri);
+                }
+                break;
+            }
+
+            case REVIEWS:{
+                long _id = db.insert(MovieContract.ReviewEntry.TABLE_REVIEW, null, contentValues);
+                // insert unless it is already contained in the database
+                if (_id > 0) {
+                    returnUri = MovieContract.ReviewEntry.buildReviewUri(_id);
+                } else {
+                    throw new android.database.SQLException("Failed to insert row into: " + uri);
+                }
+                break;
+            }
+
+            case FAVORITE:{
+                long _id = db.insert(MovieContract.FavoriteEntry.TABLE_FAVORITE, null, contentValues);
+                // insert unless it is already contained in the database
+                if (_id > 0) {
+                    returnUri = MovieContract.FavoriteEntry.buildFavoriteUri(_id);
+                } else {
+                    throw new android.database.SQLException("Failed to insert row into: " + uri);
+                }
+                break;
+            }
+
+
 
 
             default: {
@@ -198,22 +276,15 @@ public class MovieProvider extends ContentProvider {
         final int match = sUriMatcher.match(uri);
         int numDeleted;
         switch(match){
-            case DETAIL:
-                numDeleted = db.delete(
-                        MovieContract.DetailEntry.TABLE_DETAIL, selection, selectionArgs);
-                // reset _ID
-                db.execSQL("DELETE FROM SQLITE_SEQUENCE WHERE NAME = '" +
-                        MovieContract.DetailEntry.TABLE_DETAIL + "'");
-                break;
-            case DETAIL_WITH_ID:
+
+            case FAVORITE_WITH_ID:
                 numDeleted = db.delete(MovieContract.FavoriteEntry.TABLE_FAVORITE,
                         MovieContract.FavoriteEntry.COLUMN_MOVIE_ID + " = ?",
                         new String[]{String.valueOf(ContentUris.parseId(uri))});
-                // reset _ID
-                db.execSQL("DELETE FROM SQLITE_SEQUENCE WHERE NAME = '" +
-                        MovieContract.FavoriteEntry.TABLE_FAVORITE + "'");
 
                 break;
+
+
             default:
                 throw new UnsupportedOperationException("Unknown uri: " + uri);
         }

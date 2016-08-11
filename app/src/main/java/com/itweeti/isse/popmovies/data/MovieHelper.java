@@ -17,7 +17,7 @@ import android.util.Log;
 public class MovieHelper extends SQLiteOpenHelper {
 
     private static final String DATABASE_NAME = "movie.db";
-    private static final int DATABASE_VERSION = 8;
+    private static final int DATABASE_VERSION = 9;
 
     private static final String TEXT_TYPE = " TEXT";
     private static final String BLOB_TYPE = " BLOB";
@@ -63,7 +63,6 @@ public class MovieHelper extends SQLiteOpenHelper {
             "CREATE TABLE " + MovieContract.FavoriteEntry.TABLE_FAVORITE + " (" +
                     MovieContract.FavoriteEntry._ID + " INTEGER PRIMARY KEY," +
                     MovieContract.FavoriteEntry.COLUMN_MOVIE_ID + TEXT_TYPE + COMMA_SEP +
-                    MovieContract.FavoriteEntry.COLUMN_TITLE + TEXT_TYPE + COMMA_SEP +
                     MovieContract.FavoriteEntry.COLUMN_IMAGE + TEXT_TYPE +
                     " )";
 
@@ -121,25 +120,6 @@ public class MovieHelper extends SQLiteOpenHelper {
     public void onDowngrade(SQLiteDatabase db, int oldVersion, int newVersion) {
         super.onDowngrade(db, oldVersion, newVersion);
     }
-
-
-
-    // Adding new favorites to TABLE_FAVORITE
-    public void addMovieAsFavorite(String movieId, String title, String image) {
-        SQLiteDatabase db = this.getWritableDatabase();
-
-
-        ContentValues detailValues = new ContentValues();
-        detailValues.put(MovieContract.FavoriteEntry.COLUMN_MOVIE_ID, movieId);
-        detailValues.put(MovieContract.FavoriteEntry.COLUMN_TITLE, title);
-        detailValues.put(MovieContract.FavoriteEntry.COLUMN_IMAGE, image);
-
-        // Inserting Row
-        db.insert(MovieContract.FavoriteEntry.TABLE_FAVORITE, null, detailValues);
-
-        db.close(); // Closing database connection
-    }
-
 
 
     // Adding new details to TABLE_DETAIL

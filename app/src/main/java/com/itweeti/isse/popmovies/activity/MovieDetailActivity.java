@@ -1,5 +1,6 @@
 package com.itweeti.isse.popmovies.activity;
 
+import android.content.ContentUris;
 import android.content.ContentValues;
 import android.content.Intent;
 import android.database.Cursor;
@@ -47,6 +48,7 @@ import org.json.JSONObject;
 import java.io.ByteArrayOutputStream;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Vector;
 
 /**
  * An activity representing a single Movie detail screen. This
@@ -96,6 +98,8 @@ public class MovieDetailActivity extends AppCompatActivity {
     private String encodedString = "";
     private ImageLoader imageLoader;
     private List<Reviews> movieReviewList;
+
+    private Vector<ContentValues> cVVector;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -172,7 +176,7 @@ public class MovieDetailActivity extends AppCompatActivity {
                         try {
                             saveAsFavorite(view);
                             //save to sqlite database
-                            db.addMovieAsFavorite(movieId,mTitle,encodedString);
+                            insertFavoriteToDb(Long.parseLong(movieId),encodedString);
                         } catch (JSONException e) {
                             e.printStackTrace();
                         }
@@ -200,7 +204,8 @@ public class MovieDetailActivity extends AppCompatActivity {
                         // delete MOVIEID from the list
                         try {
                             Utils.removeFromFavorites(MovieDetailActivity.this, movieId, view);
-
+                            //TODO: delete favorites in database
+                            deleteFavoriteinDB(Long.parseLong(movieId));
 
                         } catch (JSONException e) {
                             e.printStackTrace();
@@ -267,19 +272,159 @@ public class MovieDetailActivity extends AppCompatActivity {
                     .commit();
         }
 
+    }
+
+    private void deleteFavoriteinDB(long movieId){
+        String id = String.valueOf(movieId);
+        String movie_id = "";
+
+        // First, check if the movieId exists in the db
+        Cursor locationCursor = this.getContentResolver().query(
+                MovieContract.FavoriteEntry.CONTENT_URI,
+                new String[]{ MovieContract.FavoriteEntry.COLUMN_MOVIE_ID},
+                MovieContract.FavoriteEntry.COLUMN_MOVIE_ID + " = ?",
+                new String[]{id},
+                null);
+
+        if (locationCursor.moveToFirst()) {
+            int movieIdIndex = locationCursor.getColumnIndex( MovieContract.FavoriteEntry.COLUMN_MOVIE_ID);
+            movie_id = locationCursor.getString(movieIdIndex);
+
+            Uri uri = MovieContract.FavoriteEntry.buildFavoriteUri(movieId);
+
+            // Finally, insert location data into the database.
+            this.getContentResolver().delete(
+                    uri,
+                    MovieContract.FavoriteEntry.COLUMN_MOVIE_ID + " = ?",//with a movie id of ?
+                    new String[]{id}
+            );
+        }
+
+        locationCursor.close();
+    }
 
 
 
+    //add movie_id, encoded_image to database
+    private void insertFavoriteToDb(long movieId, String encodedString){
+        String id = String.valueOf(movieId);
+        String movie_id = "";
+
+        // First, check if the movieId exists in the db
+        Cursor locationCursor = this.getContentResolver().query(
+                MovieContract.FavoriteEntry.CONTENT_URI,
+                new String[]{ MovieContract.FavoriteEntry.COLUMN_MOVIE_ID},
+                MovieContract.FavoriteEntry.COLUMN_MOVIE_ID + " = ?",
+                new String[]{id},
+                null);
+
+        if (locationCursor.moveToFirst()) {
+            int movieIdIndex = locationCursor.getColumnIndex( MovieContract.FavoriteEntry.COLUMN_MOVIE_ID);
+            movie_id = locationCursor.getString(movieIdIndex);
+        } else {
+            // Now that the content provider is set up, inserting rows of data is pretty simple.
+            // First create a ContentValues object to hold the data you want to insert.
+            ContentValues movieValues = new ContentValues();
+
+            // Then add the data, along with the corresponding name of the data type,
+            // so the content provider knows what kind of value is being inserted.
+            movieValues.put(MovieContract.FavoriteEntry.COLUMN_MOVIE_ID, id);
+            movieValues.put(MovieContract.FavoriteEntry.COLUMN_IMAGE, encodedString);
+            // Finally, insert location data into the database.
+            Uri insertedUri = this.getContentResolver().insert(
+                    MovieContract.FavoriteEntry.CONTENT_URI,
+                    movieValues
+            );
+
+            // The resulting URI contains the ID for the row.  Extract the locationId from the Uri.
+            movie_id = String.valueOf(ContentUris.parseId(insertedUri));
+
+        }
+
+        locationCursor.close();
+    }
 
 
+    private void addTrailers(long movieId, String num, String url){
+        String id = String.valueOf(movieId);
+        String movie_id = "";
+
+        //insert trailer if there's no movie_id
+        Cursor cursor = this.getContentResolver().query(
+                MovieContract.TrailerEntry.CONTENT_URI,
+                null,
+                MovieContract.TrailerEntry.COLUMN_MOVIE_ID + " = ? AND " + MovieContract.TrailerEntry.COLUMN_TRAILER_URL + " = ? ",
+                new String[]{id,url},
+                null);
+        if (cursor.moveToFirst()) {
+            int movieIdIndex = cursor.getColumnIndex( MovieContract.TrailerEntry.COLUMN_MOVIE_ID);
+            movie_id = cursor.getString(movieIdIndex);
+        } else {
+            // Now that the content provider is set up, inserting rows of data is pretty simple.
+            // First create a ContentValues object to hold the data you want to insert.
+            ContentValues movieValues = new ContentValues();
+
+            // Then add the data, along with the corresponding name of the data type,
+            // so the content provider knows what kind of value is being inserted.
+            movieValues.put(MovieContract.TrailerEntry.COLUMN_MOVIE_ID, id);
+            movieValues.put(MovieContract.TrailerEntry.COLUMN_TRAILER_NUMBER, num);
+            movieValues.put(MovieContract.TrailerEntry.COLUMN_TRAILER_URL, url);
+            // Finally, insert location data into the database.
+            Uri insertedUri = this.getContentResolver().insert(
+                    MovieContract.TrailerEntry.CONTENT_URI,
+                    movieValues
+            );
+
+
+        }
+
+        cursor.close();
 
     }
+
+    private void addReviews(long movieId, String author, String content){
+        String id = String.valueOf(movieId);
+        String movie_id = "";
+
+        //insert trailer if there's no movie_id
+        Cursor cursor = this.getContentResolver().query(
+                MovieContract.ReviewEntry.CONTENT_URI,
+                null,
+                MovieContract.ReviewEntry.COLUMN_MOVIE_ID + " = ? AND " + MovieContract.ReviewEntry.COLUMN_AUTHOR + " = ? ",
+                new String[]{id,author},
+                null);
+        if (cursor.moveToFirst()) {
+            int movieIdIndex = cursor.getColumnIndex( MovieContract.ReviewEntry.COLUMN_MOVIE_ID);
+            movie_id = cursor.getString(movieIdIndex);
+        } else {
+            // Now that the content provider is set up, inserting rows of data is pretty simple.
+            // First create a ContentValues object to hold the data you want to insert.
+            ContentValues movieValues = new ContentValues();
+
+            // Then add the data, along with the corresponding name of the data type,
+            // so the content provider knows what kind of value is being inserted.
+            movieValues.put(MovieContract.ReviewEntry.COLUMN_MOVIE_ID, id);
+            movieValues.put(MovieContract.ReviewEntry.COLUMN_AUTHOR, author);
+            movieValues.put(MovieContract.ReviewEntry.COLUMN_CONTENT, content);
+            // Finally, insert location data into the database.
+            Uri insertedUri = this.getContentResolver().insert(
+                    MovieContract.ReviewEntry.CONTENT_URI,
+                    movieValues
+            );
+
+
+        }
+
+        cursor.close();
+
+    }
+
 
     private void updateTableDetail(long movieId, String title, String year, String duration, String rating, String overview, String poster) {
         String id = String.valueOf(movieId);
         String movie_id = "";
 
-        //TODO: update the COLUMN_VIEWED to "1" on TABLE_DETAIL where movieID = ?
+        //update the COLUMN_VIEWED to "1" on TABLE_DETAIL where movieID = ?
         // First, check if the view is 0
         Cursor cursor = this.getContentResolver().query(
                 MovieContract.DetailEntry.CONTENT_URI,
@@ -532,7 +677,7 @@ public class MovieDetailActivity extends AppCompatActivity {
 
         final String BASE_PATH = "http://api.themoviedb.org/3/movie/";
         final String api_key = "?api_key=" + Config.API_KEY;
-        String id = movieId;
+        final String id = movieId;
         final String vid = "/reviews";
         final String reviews_url = BASE_PATH + id + vid + api_key;
 
@@ -565,6 +710,9 @@ public class MovieDetailActivity extends AppCompatActivity {
 
                                     Reviews reviews = new Reviews(author, content);
                                     reviewList.add(reviews);
+
+                                    //add reviews to database
+                                    addReviews(Long.parseLong(id), author, content);
 
                                 }
 
@@ -689,7 +837,7 @@ public class MovieDetailActivity extends AppCompatActivity {
 
         final String BASE_PATH = "http://api.themoviedb.org/3/movie/";
         final String api_key = "?api_key=" + Config.API_KEY;
-        String id = movieId;
+        final String id = movieId;
         final String vid = "/videos";
         String trailer_url = BASE_PATH + id + vid + api_key;
 
@@ -726,6 +874,9 @@ public class MovieDetailActivity extends AppCompatActivity {
 
                                 //save trailers in a list
                                 movieTrailersList.add(trailer);
+
+                                //add to database
+                                addTrailers(Long.parseLong(id),trailer_num, youtube_trailer);
 
                             }
 
