@@ -1,6 +1,5 @@
 package com.itweeti.isse.popmovies.data;
 
-import android.content.ContentValues;
 import android.content.Context;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
@@ -17,7 +16,7 @@ import android.util.Log;
 public class MovieHelper extends SQLiteOpenHelper {
 
     private static final String DATABASE_NAME = "movie.db";
-    private static final int DATABASE_VERSION = 9;
+    private static final int DATABASE_VERSION = 10;
 
     private static final String TEXT_TYPE = " TEXT";
     private static final String BLOB_TYPE = " BLOB";
@@ -63,6 +62,7 @@ public class MovieHelper extends SQLiteOpenHelper {
             "CREATE TABLE " + MovieContract.FavoriteEntry.TABLE_FAVORITE + " (" +
                     MovieContract.FavoriteEntry._ID + " INTEGER PRIMARY KEY," +
                     MovieContract.FavoriteEntry.COLUMN_MOVIE_ID + TEXT_TYPE + COMMA_SEP +
+                    MovieContract.FavoriteEntry.COLUMN_TITLE + TEXT_TYPE + COMMA_SEP +
                     MovieContract.FavoriteEntry.COLUMN_IMAGE + TEXT_TYPE +
                     " )";
 
@@ -120,70 +120,5 @@ public class MovieHelper extends SQLiteOpenHelper {
     public void onDowngrade(SQLiteDatabase db, int oldVersion, int newVersion) {
         super.onDowngrade(db, oldVersion, newVersion);
     }
-
-
-    // Adding new details to TABLE_DETAIL
-    public void addDetailsToList(String movieId, String title, String base64Poster, String overview, String year, String vote_average, String duration) {
-        SQLiteDatabase db = this.getWritableDatabase();
-
-
-        ContentValues detailValues = new ContentValues();
-        detailValues.put(MovieContract.DetailEntry.COLUMN_MOVIE_ID, movieId);
-        detailValues.put(MovieContract.DetailEntry.COLUMN_TITLE, title);
-        detailValues.put(MovieContract.DetailEntry.COLUMN_YEAR, year);
-        detailValues.put(MovieContract.DetailEntry.COLUMN_DURATION, duration);
-        detailValues.put(MovieContract.DetailEntry.COLUMN_RATING, vote_average);
-        detailValues.put(MovieContract.DetailEntry.COLUMN_OVERVIEW, overview);
-        detailValues.put(MovieContract.DetailEntry.COLUMN_POSTER, base64Poster);
-
-        // Inserting Row
-        db.insert(MovieContract.DetailEntry.TABLE_DETAIL, null, detailValues);
-
-        db.close(); // Closing database connection
-    }
-
-    //adding review to REVIEW_TBL
-    public void addReviewsToList(String movieId, String author, String content) {
-        SQLiteDatabase db = this.getWritableDatabase();
-
-
-        ContentValues reviewValues = new ContentValues();
-        reviewValues.put(MovieContract.ReviewEntry.COLUMN_MOVIE_ID, movieId);
-        reviewValues.put(MovieContract.ReviewEntry.COLUMN_AUTHOR, author);
-        reviewValues.put(MovieContract.ReviewEntry.COLUMN_CONTENT, content);
-
-        // Inserting Row
-        db.insert(MovieContract.ReviewEntry.TABLE_REVIEW, null, reviewValues);
-
-        db.close(); // Closing database connection
-
-    }
-
-    //adding trailer to TRAILER_TBL
-    public void addTrailersToList(String movieId, String num, String url) {
-        SQLiteDatabase db = this.getWritableDatabase();
-
-
-        ContentValues trailerValues = new ContentValues();
-        trailerValues.put(MovieContract.TrailerEntry.COLUMN_MOVIE_ID, movieId);
-        trailerValues.put(MovieContract.TrailerEntry.COLUMN_TRAILER_NUMBER, num);
-        trailerValues.put(MovieContract.TrailerEntry.COLUMN_TRAILER_URL, url);
-
-        // Inserting Row
-        db.insert(MovieContract.TrailerEntry.TABLE_TRAILER, null, trailerValues);
-
-        db.close(); // Closing database connection
-
-    }
-
-
-    public void removeFromFavorites(String movieId) {
-        SQLiteDatabase db = this.getWritableDatabase();
-        db.delete(MovieContract.FavoriteEntry.TABLE_FAVORITE, MovieContract.FavoriteEntry.COLUMN_MOVIE_ID + " = ?",
-                new String[]{String.valueOf(movieId)});
-
-        db.close();
-    }
-
 
 }

@@ -2,6 +2,8 @@ package com.itweeti.isse.popmovies.fragment;
 
 import android.app.Activity;
 import android.content.Intent;
+import android.database.Cursor;
+import android.net.Uri;
 import android.os.Bundle;
 import android.os.StrictMode;
 import android.support.design.widget.CollapsingToolbarLayout;
@@ -30,15 +32,15 @@ import com.google.android.youtube.player.YouTubeApiServiceUtil;
 import com.google.android.youtube.player.YouTubeInitializationResult;
 import com.google.android.youtube.player.YouTubeStandalonePlayer;
 import com.itweeti.isse.popmovies.R;
-import com.itweeti.isse.popmovies.utils.Config;
-import com.itweeti.isse.popmovies.utils.Utils;
 import com.itweeti.isse.popmovies.activity.MovieDetailActivity;
 import com.itweeti.isse.popmovies.activity.MovieListActivity;
-
-import com.itweeti.isse.popmovies.views.adapters.ReviewRecyclerViewAdapter;
-import com.itweeti.isse.popmovies.views.adapters.TrailerRecyclerViewAdapter;
+import com.itweeti.isse.popmovies.data.MovieContract;
 import com.itweeti.isse.popmovies.models.Reviews;
 import com.itweeti.isse.popmovies.models.Trailer;
+import com.itweeti.isse.popmovies.utils.Config;
+import com.itweeti.isse.popmovies.utils.Utils;
+import com.itweeti.isse.popmovies.views.adapters.ReviewRecyclerViewAdapter;
+import com.itweeti.isse.popmovies.views.adapters.TrailerRecyclerViewAdapter;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -62,7 +64,7 @@ public class MovieDetailFragment extends Fragment {
 
 
     private static final String LOG_TAG = "OverviewFragment";
-    private static final String STATE_ID = "movie_id" ;
+    private static final String STATE_ID = "movie_id";
     private static final String STATE_DATA = "flagDataType";
     private static final String STATE_TITLE = "title";
     private static final String STATE_YEAR = "year";
@@ -70,7 +72,7 @@ public class MovieDetailFragment extends Fragment {
     private static final String STATE_RATING = "rating";
     private static final String STATE_VOTE = "vote_ave";
     private static final String STATE_OVERVIEW = "overview";
-    private static final String STATE_POSTER ="poster" ;
+    private static final String STATE_POSTER = "poster";
 
     private String movieId;
 
@@ -104,7 +106,6 @@ public class MovieDetailFragment extends Fragment {
     private ReviewFragment.OnListFragmentInteractionListener mReviewListener;
 
 
-
     //if from api or local data
     //flagDataType = 0 --> from popular movies Activty
     //flagDataType = 1 --> from favorites activity
@@ -135,7 +136,7 @@ public class MovieDetailFragment extends Fragment {
             // to load content from a content provider.
 
             //get movieId from MovieDetailActivity
-            flagDataType = getArguments().getInt("flagData",0);
+            flagDataType = getArguments().getInt("flagData", 0);
             movieId = getArguments().getString("movieId");
             mTitle = getArguments().getString("title");
 
@@ -156,7 +157,7 @@ public class MovieDetailFragment extends Fragment {
         }
 
 
-        if(savedInstanceState!=null) {
+        if (savedInstanceState != null) {
             movieId = savedInstanceState.getString(STATE_ID);
             flagDataType = savedInstanceState.getInt(STATE_DATA);
             mTitle = savedInstanceState.getString(STATE_TITLE);
@@ -173,7 +174,6 @@ public class MovieDetailFragment extends Fragment {
         //for allowing access in movie poster
         StrictMode.ThreadPolicy policy = new StrictMode.ThreadPolicy.Builder().permitAll().build();
         StrictMode.setThreadPolicy(policy);
-
 
 
         //Check for any issues
@@ -210,33 +210,108 @@ public class MovieDetailFragment extends Fragment {
 
         Bundle arguments = getArguments();
         if (arguments.containsKey(ARG_ITEM_ID)) {
-            flagDataType = arguments.getInt("flagData",0);
+            flagDataType = arguments.getInt("flagData", 0);
             mTitle = arguments.getString("title");
             mYear = arguments.getString("year");
             mDuration = arguments.getString("duration");
             mRating = arguments.getString("rating");
-            vote_average = Float.parseFloat(mRating)/2;
+            vote_average = Float.parseFloat(mRating) / 2;
             mOverview = arguments.getString("overview");
-            mPoster = arguments.getString("poster");
-            trailers = arguments.getParcelableArrayList("trailers");
-            reviews = arguments.getParcelableArrayList("reviews");
+            //mPoster = arguments.getString("poster");
+            //trailers = arguments.getParcelableArrayList("trailers");
+            //reviews = arguments.getParcelableArrayList("reviews");
         } else {
             flagDataType = intent.getIntExtra("flagData", 0);
             mTitle = intent.getStringExtra("title");
             mYear = intent.getStringExtra("year");
             mDuration = intent.getStringExtra("duration");
             mRating = intent.getStringExtra("rating");
-            vote_average = Float.parseFloat(mRating)/2;
+            vote_average = Float.parseFloat(mRating) / 2;
             mOverview = intent.getStringExtra("overview");
-            mPoster = intent.getStringExtra("poster");
-            trailers = intent.getParcelableArrayListExtra("trailers");
-            reviews = intent.getParcelableArrayListExtra("reviews");
+            //mPoster = intent.getStringExtra("poster");
+            //trailers = intent.getParcelableArrayListExtra("trailers");
+            //reviews = intent.getParcelableArrayListExtra("reviews");
         }
 
-        movieTrailersList = trailers;
-        movieReviewList = reviews;
+        //movieTrailersList = trailers;
+        //movieReviewList = reviews;
 
-        setValuesOfView(mYear,mDuration,mOverview,vote_average,mPoster);
+        /* get poster in Favorite TABLE*/
+        Uri uri = MovieContract.FavoriteEntry.buildFavoriteUri(Long.parseLong(movieId));
+        Cursor cursor = getContext().getContentResolver().query(
+                uri,
+                null,
+                MovieContract.FavoriteEntry.COLUMN_MOVIE_ID + " = ?",
+                new String[]{movieId},
+                null);
+
+        if (cursor.moveToFirst()) {
+            int posterIndex = cursor.getColumnIndex(MovieContract.FavoriteEntry.COLUMN_IMAGE);
+            mPoster = cursor.getString(posterIndex); //column_image is 3rd column
+        }
+
+        //finally, close the cursor
+        cursor.close();
+
+
+         /* get ReviewList in REVIEW TABLE*/
+        movieReviewList = new ArrayList<>();
+        uri = MovieContract.ReviewEntry.buildReviewUri(Long.parseLong(movieId));
+        cursor = getContext().getContentResolver().query(
+                uri,
+                null,
+                MovieContract.ReviewEntry.COLUMN_MOVIE_ID + " = ?",
+                new String[]{movieId},
+                null);
+
+        int authorIndex = 0;
+        int contentIndex = 0;
+        if (cursor.moveToFirst()) {
+            authorIndex = cursor.getColumnIndex(MovieContract.ReviewEntry.COLUMN_AUTHOR);
+            contentIndex = cursor.getColumnIndex(MovieContract.ReviewEntry.COLUMN_CONTENT);
+        }
+
+        while (cursor.isAfterLast() == false) {
+            //get the trailer num, url
+            String author = cursor.getString(authorIndex);
+            String content = cursor.getString(contentIndex);
+            //add to list
+            Reviews r = new Reviews(author, content);
+            movieReviewList.add(r);
+        }
+        //finally, close the cursor
+        cursor.close();
+
+
+         /* get movieTrailersList in TRAILER TABLE*/
+        movieTrailersList = new ArrayList<>();
+        uri = MovieContract.TrailerEntry.buildTrailerUri(Long.parseLong(movieId));
+        cursor = getContext().getContentResolver().query(
+                uri,
+                null,
+                MovieContract.TrailerEntry.COLUMN_MOVIE_ID + " = ?",
+                new String[]{movieId},
+                null);
+
+        int numIndex = 0;
+        int urlIndex = 0;
+        if (cursor.moveToFirst()) {
+            numIndex = cursor.getColumnIndex(MovieContract.TrailerEntry.COLUMN_TRAILER_NUMBER);
+            urlIndex = cursor.getColumnIndex(MovieContract.TrailerEntry.COLUMN_TRAILER_URL);
+        }
+
+        while (cursor.isAfterLast() == false) {
+            //get the trailer num, url
+            String num = cursor.getString(numIndex);
+            String url = cursor.getString(urlIndex);
+            //add to list
+            Trailer t = new Trailer(num, url);
+            movieTrailersList.add(t);
+        }
+        //finally, close the cursor
+        cursor.close();
+
+        setValuesOfView(mYear, mDuration, mOverview, vote_average, mPoster);
     }
 
     private void requestMovieReviews(String movieId) {
@@ -269,7 +344,7 @@ public class MovieDetailFragment extends Fragment {
                             String author = "";
                             String content = "";
 
-                            if (results!=null){
+                            if (results != null) {
                                 for (int i = 0; i < results.length(); i++) {
 
                                     JSONObject obj = results.getJSONObject(i);
@@ -284,7 +359,7 @@ public class MovieDetailFragment extends Fragment {
 
                             }
 
-                            if(movieReviewList.isEmpty()) {
+                            if (movieReviewList.isEmpty()) {
                                 author = "No Reviews Available";
                                 content = " ";
 
@@ -308,7 +383,7 @@ public class MovieDetailFragment extends Fragment {
                     @Override
                     public void onErrorResponse(VolleyError error) {
                         //other catches
-                        if(error instanceof NoConnectionError) {
+                        if (error instanceof NoConnectionError) {
                             //show dialog no net connection
                             Utils.showSuccessDialog(getActivity(), R.string.no_connection, R.string.net).show();
                         }
@@ -340,21 +415,19 @@ public class MovieDetailFragment extends Fragment {
         StringRequest stringRequest = new StringRequest(Request.Method.GET, trailer_url,
                 new Response.Listener<String>() {
                     @Override
-                    public void onResponse(String response)
-                    {
+                    public void onResponse(String response) {
                         // Do something with the response
                         try {
 
                             JSONObject jsonObject = new JSONObject(response);
                             JSONArray results = jsonObject.getJSONArray("results");
 
-                            for (int i = 0; i < results.length(); i++)
-                            {
+                            for (int i = 0; i < results.length(); i++) {
                                 JSONObject obj = results.getJSONObject(i);
                                 String trailer_key = obj.getString("key");
                                 //String youtube_trailer = "https://www.youtube.com/watch?v=" + trailer_key;
-                                String youtube_trailer =  trailer_key;
-                                String trailer_num = "Trailer " + (i+1);
+                                String youtube_trailer = trailer_key;
+                                String trailer_num = "Trailer " + (i + 1);
 
                                 Trailer trailer = new Trailer(trailer_num, youtube_trailer);
 
@@ -363,7 +436,7 @@ public class MovieDetailFragment extends Fragment {
                             }
 
                             // no trailers fetched from API
-                            if (movieTrailersList.isEmpty()){
+                            if (movieTrailersList.isEmpty()) {
                                 txtTrailer.setText(R.string.no_trailers);
                             }
 
@@ -379,7 +452,7 @@ public class MovieDetailFragment extends Fragment {
                     @Override
                     public void onErrorResponse(VolleyError error) {
                         //other catches
-                        if(error instanceof NoConnectionError) {
+                        if (error instanceof NoConnectionError) {
                             //show dialog no net connection
                             Utils.showSuccessDialog(getActivity(), R.string.no_connection, R.string.net).show();
                         }
@@ -412,7 +485,6 @@ public class MovieDetailFragment extends Fragment {
         //3. And finally the poster path returned by the query : movie_image
 
 
-
         // Formulate the request and handle the response.
         StringRequest stringRequest = new StringRequest(Request.Method.GET, original_url,
                 new Response.Listener<String>() {
@@ -434,11 +506,11 @@ public class MovieDetailFragment extends Fragment {
                             Log.v("TITLE:>>>>>>>>>>>> ", mTitle);
                             Log.v("mYear:>>>>>>>>>>>> ", mYear);
                             Log.v("mDuration:>>>>>>>>>>> ", mDuration);
-                            Log.v("mRating:>>>>>>>>>>>>>> ",mRating);
-                            Log.v("mOverview:>>>>>>>>>>>> ",mOverview);
+                            Log.v("mRating:>>>>>>>>>>>>>> ", mRating);
+                            Log.v("mOverview:>>>>>>>>>>>> ", mOverview);
                             Log.v("mPoster:>>>>>>>>>>>>>> ", mPoster);
 
-                            setValuesOfView(mYear,mDuration,mOverview,vote_average,mPoster);
+                            setValuesOfView(mYear, mDuration, mOverview, vote_average, mPoster);
 
                         } catch (JSONException e) {
                             e.printStackTrace();
@@ -449,7 +521,7 @@ public class MovieDetailFragment extends Fragment {
                     @Override
                     public void onErrorResponse(VolleyError error) {
                         //other catches
-                        if(error instanceof NoConnectionError) {
+                        if (error instanceof NoConnectionError) {
                             //show dialog no net connection
                             Utils.showSuccessDialog(getActivity(), R.string.no_connection, R.string.net).show();
                         }
@@ -467,9 +539,9 @@ public class MovieDetailFragment extends Fragment {
         txtYear.setText(mYear);
         txtDuration.setText(mDuration);
         txtDescription.setText(mOverview);
-        ratingBar.setRating(vote_average/2);
+        ratingBar.setRating(vote_average / 2);
 
-        switch (flagDataType){
+        switch (flagDataType) {
             case 0:
                 Glide
                         .with(getActivity())
@@ -494,7 +566,7 @@ public class MovieDetailFragment extends Fragment {
                              Bundle savedInstanceState) {
         View rootView = inflater.inflate(R.layout.movie_detail, container, false);
 
-        Log.v("HEHEHE - 1", "flagDataType=" + flagDataType+ "  movieId="+movieId);
+        Log.v("HEHEHE - 1", "flagDataType=" + flagDataType + "  movieId=" + movieId);
 
         // Show the content
         if (movieId != null) {
@@ -525,7 +597,7 @@ public class MovieDetailFragment extends Fragment {
             txtTrailer = (TextView) rootView.findViewById(R.id.txt_trailer);
 
             //request data from moviedb.org using API call or from shared preferences
-            switch (flagDataType){
+            switch (flagDataType) {
                 case 0:
                     requestMovieDetail(movieId);
                     requestMovieTrailer(movieId);
@@ -549,7 +621,7 @@ public class MovieDetailFragment extends Fragment {
         } else {
             reviewRecvyclerView.setLayoutManager(new GridLayoutManager(getActivity(), mColumnCount));
         }
-        reviewListAdapter = new ReviewRecyclerViewAdapter(movieReviewList,mReviewListener);
+        reviewListAdapter = new ReviewRecyclerViewAdapter(movieReviewList, mReviewListener);
         reviewRecvyclerView.setAdapter(reviewListAdapter);
     }
 
@@ -592,7 +664,6 @@ public class MovieDetailFragment extends Fragment {
         startActivity(intent);
 
     }
-
 
 
 }

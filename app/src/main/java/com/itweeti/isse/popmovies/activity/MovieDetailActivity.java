@@ -61,7 +61,6 @@ public class MovieDetailActivity extends AppCompatActivity {
     private static final String LOG_TAG = "MovieDetailActivity" ;
     short flagSave; //on/off for the mark as favorite button
     private String movieId;
-    private String movieName;
     private int flagData;
 
     private FloatingActionButton fab;
@@ -115,7 +114,7 @@ public class MovieDetailActivity extends AppCompatActivity {
 
         if (intent != null) {
             movieId = intent.getStringExtra("movieId");
-            movieName = intent.getStringExtra("title");
+            mTitle = intent.getStringExtra("title");
             flagData = intent.getIntExtra("flagData", 0);
             Toast.makeText(this, LOG_TAG + " MY ID: " + movieId, Toast.LENGTH_SHORT).show();
 
@@ -127,11 +126,11 @@ public class MovieDetailActivity extends AppCompatActivity {
                 mRating = intent.getStringExtra("rating");
                 vote_average = Float.parseFloat(mRating)/2;
                 mOverview = intent.getStringExtra("overview");
-                mPoster = intent.getStringExtra("poster");
-                trailers = intent.getParcelableArrayListExtra("trailers");
-                reviews = intent.getParcelableArrayListExtra("reviews");
-                movieTrailersList = trailers;
-                movieReviewList = reviews;
+
+                //TODO: fetch mPoster, movieTrailersList, movieReviewList in database
+
+
+
             }
 
         }
@@ -176,7 +175,7 @@ public class MovieDetailActivity extends AppCompatActivity {
                         try {
                             saveAsFavorite(view);
                             //save to sqlite database
-                            insertFavoriteToDb(Long.parseLong(movieId),encodedString);
+                            insertFavoriteToDb(Long.parseLong(movieId),mTitle, encodedString);
                         } catch (JSONException e) {
                             e.printStackTrace();
                         }
@@ -227,7 +226,7 @@ public class MovieDetailActivity extends AppCompatActivity {
             actionBar.setDisplayHomeAsUpEnabled(true);
 
             //set action bar title
-            getSupportActionBar().setTitle(movieName);
+            getSupportActionBar().setTitle(mTitle);
         }
 
         //request data from moviedb.org using API call or from shared preferences
@@ -292,7 +291,7 @@ public class MovieDetailActivity extends AppCompatActivity {
 
             Uri uri = MovieContract.FavoriteEntry.buildFavoriteUri(movieId);
 
-            // Finally, insert location data into the database.
+            // Finally, delete favorite movie into the database.
             this.getContentResolver().delete(
                     uri,
                     MovieContract.FavoriteEntry.COLUMN_MOVIE_ID + " = ?",//with a movie id of ?
@@ -306,7 +305,7 @@ public class MovieDetailActivity extends AppCompatActivity {
 
 
     //add movie_id, encoded_image to database
-    private void insertFavoriteToDb(long movieId, String encodedString){
+    private void insertFavoriteToDb(long movieId, String title, String encodedString){
         String id = String.valueOf(movieId);
         String movie_id = "";
 
@@ -329,6 +328,7 @@ public class MovieDetailActivity extends AppCompatActivity {
             // Then add the data, along with the corresponding name of the data type,
             // so the content provider knows what kind of value is being inserted.
             movieValues.put(MovieContract.FavoriteEntry.COLUMN_MOVIE_ID, id);
+            movieValues.put(MovieContract.FavoriteEntry.COLUMN_TITLE, title);
             movieValues.put(MovieContract.FavoriteEntry.COLUMN_IMAGE, encodedString);
             // Finally, insert location data into the database.
             Uri insertedUri = this.getContentResolver().insert(
@@ -930,10 +930,10 @@ public class MovieDetailActivity extends AppCompatActivity {
 
             //first trailer to send at share intent
             if (movieTrailersList.size()!=0){
-                first_trailer_url = movieName + ": https://www.youtube.com/watch?v=" + movieTrailersList.get(0).getTrailerUrl();
+                first_trailer_url = mTitle + ": https://www.youtube.com/watch?v=" + movieTrailersList.get(0).getTrailerUrl();
             }else{
                 //no trailer available, return movie name instead
-                first_trailer_url = movieName;
+                first_trailer_url = mTitle;
             }
 
             mShareActionProvider.setShareIntent(createShareMovieIntent());

@@ -7,6 +7,12 @@
         android:title="@string/action_settings"
         app:showAsAction="never"/>
 
+    <item
+        android:id="@+id/action_favorites"
+        android:orderInCategory="200"
+        android:title="@string/fav"
+        app:showAsAction="never"/>
+
     <item android:id="@+id/action_fav"
         android:icon="@mipmap/ic_fav"
         android:title="@string/fav"

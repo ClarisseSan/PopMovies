@@ -1,5 +1,7 @@
 package com.itweeti.isse.popmovies.activity;
 
+
+
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -22,12 +24,12 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.itweeti.isse.popmovies.R;
-import com.itweeti.isse.popmovies.utils.Utils;
 import com.itweeti.isse.popmovies.fragment.MovieDetailFragment;
 import com.itweeti.isse.popmovies.models.FavoriteMovie;
-import com.itweeti.isse.popmovies.views.adapters.gridview.GridSpacingItemDecoration;
 import com.itweeti.isse.popmovies.models.Reviews;
 import com.itweeti.isse.popmovies.models.Trailer;
+import com.itweeti.isse.popmovies.utils.Utils;
+import com.itweeti.isse.popmovies.views.adapters.gridview.GridSpacingItemDecoration;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -75,19 +77,14 @@ public class FavoriteListActivity extends AppCompatActivity {
         recyclerView = (RecyclerView) findViewById(R.id.favorite_list);
         recyclerView.setLayoutManager(new GridLayoutManager(this, 2));
 
-        int spanCount = 2; // 2 columns
-        int spacing = 20; // 20px
-        boolean includeEdge = false;
-        recyclerView.addItemDecoration(new GridSpacingItemDecoration(spanCount, spacing, includeEdge));
-
 
         assert recyclerView != null;
         displayFavoriteMovies(recyclerView);
 
-
-        //assert recyclerView != null;
-        //setupRecyclerView(recyclerView);
-
+        int spanCount = 2; // 2 columns
+        int spacing = 20; // 20px
+        boolean includeEdge = false;
+        recyclerView.addItemDecoration(new GridSpacingItemDecoration(spanCount, spacing, includeEdge));
 
         if (findViewById(R.id.favorite_detail_container) != null) {
             // The detail container view will be present only in the
@@ -95,6 +92,8 @@ public class FavoriteListActivity extends AppCompatActivity {
             // If this view is present, then the
             // activity should be in two-pane mode.
             mTwoPane = true;
+
+
         }
 
     }
@@ -189,16 +188,7 @@ public class FavoriteListActivity extends AppCompatActivity {
 
                 System.out.println("FAVORITE MOVIES SIZE---------> " + list.size());
 
-/*
-                mAdapter = new FavoriteItemRecyclerViewAdapter(list);
-                mAdapter.setItemList(list);
-                mAdapter.notifyDataSetChanged();
 
-                this.recyclerView.setAdapter(mAdapter);
-
-                //updates recyclerview once data is fetched from the API call
-                this.recyclerView.getAdapter().notifyDataSetChanged();
-                */
                 setupRecyclerView(recyclerView);
 
             }
@@ -230,11 +220,6 @@ public class FavoriteListActivity extends AppCompatActivity {
     }
 
     private void setupRecyclerView(@NonNull RecyclerView recyclerView) {
-
-       // mAdapter = new FavoriteItemRecyclerViewAdapter(list);
-       // recyclerView.setAdapter(mAdapter);
-       // mAdapter.setItemList(list);
-
         mAdapter = new FavoriteItemRecyclerViewAdapter(list);
         mAdapter.setItemList(list);
         mAdapter.notifyDataSetChanged();
@@ -309,10 +294,10 @@ public class FavoriteListActivity extends AppCompatActivity {
                                 .putExtra("year", holder.mItem.getMovie_date())
                                 .putExtra("rating", holder.mItem.getMovie_vote())
                                 .putExtra("overview", holder.mItem.getMovie_overview())
-                                .putExtra("poster", holder.mItem.getMovie_image())
-                                .putExtra("duration",holder.mItem.getMovie_duration())
-                                .putParcelableArrayListExtra("trailers", (ArrayList<? extends Parcelable>) holder.mItem.getMovie_trailerList())
-                                .putParcelableArrayListExtra("reviews", (ArrayList<? extends Parcelable>) holder.mItem.getReviewsList());
+                               // .putExtra("poster", holder.mItem.getMovie_image())
+                                .putExtra("duration",holder.mItem.getMovie_duration());
+                                //.putParcelableArrayListExtra("trailers", (ArrayList<? extends Parcelable>) holder.mItem.getMovie_trailerList())
+                               // .putParcelableArrayListExtra("reviews", (ArrayList<? extends Parcelable>) holder.mItem.getReviewsList());
 
                         context.startActivity(intent);
                     }
@@ -352,4 +337,3 @@ public class FavoriteListActivity extends AppCompatActivity {
         }
     }
 }
-

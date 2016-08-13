@@ -113,6 +113,7 @@ public final class MovieContract {
         //TRAILER TABLE
         public static final String TABLE_FAVORITE = "favorite_tbl";
         public static final String COLUMN_MOVIE_ID = "movie_id";
+        public static final String COLUMN_TITLE = "title";
         public static final String COLUMN_IMAGE = "encoded_image";
 
 

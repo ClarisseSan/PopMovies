@@ -10,7 +10,6 @@ import android.graphics.Bitmap;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
-import android.os.Handler;
 import android.preference.PreferenceManager;
 import android.support.v4.app.LoaderManager;
 import android.support.v4.content.CursorLoader;
@@ -27,7 +26,6 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
-import android.widget.ProgressBar;
 import android.widget.TextView;
 
 import com.android.volley.NoConnectionError;
@@ -38,6 +36,7 @@ import com.android.volley.VolleyError;
 import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
 import com.itweeti.isse.popmovies.R;
+import com.itweeti.isse.popmovies.carousel.MainCarousel;
 import com.itweeti.isse.popmovies.data.MovieContract;
 import com.itweeti.isse.popmovies.data.MovieHelper;
 import com.itweeti.isse.popmovies.fragment.MovieDetailFragment;
@@ -66,7 +65,8 @@ import java.util.List;
  * item details. On tablets, the activity presents the list of items and
  * item details side-by-side using two vertical panes.
  */
-public class MovieListActivity extends AppCompatActivity implements LoaderManager.LoaderCallbacks<Cursor>{
+public class MovieListActivity extends AppCompatActivity implements LoaderManager.LoaderCallbacks<Cursor> {
+
 
     /**
      * Whether or not the activity is in two-pane mode, i.e. running on a tablet
@@ -80,14 +80,10 @@ public class MovieListActivity extends AppCompatActivity implements LoaderManage
     private String sortOption;
     private MovieItemRecyclerViewAdapter mAdapter;
     private RecyclerView recyclerView;
-    private ProgressBar progressBar;
-    private int progressStatus;
-    private Handler handler;
 
 
     private ImageLoader imageLoader;
     private String encodedString = "";
-
 
 
     @Override
@@ -116,18 +112,18 @@ public class MovieListActivity extends AppCompatActivity implements LoaderManage
         }
 
 
-
         recyclerView = (RecyclerView) findViewById(R.id.movie_list);
         recyclerView.setLayoutManager(new GridLayoutManager(this, 2));
+
 
         int spanCount = 2; // 2 columns
         int spacing = 20; // 20px
         boolean includeEdge = false;
         recyclerView.addItemDecoration(new GridSpacingItemDecoration(spanCount, spacing, includeEdge));
 
+
         assert recyclerView != null;
         setupRecyclerView(recyclerView);
-
 
 
         if (findViewById(R.id.movie_detail_container) != null) {
@@ -136,12 +132,14 @@ public class MovieListActivity extends AppCompatActivity implements LoaderManage
             // If this view is present, then the
             // activity should be in two-pane mode.
             mTwoPane = true;
+
+
         }
 
         // Get the instance of SharedPreferences object
         mSharedPreferences = PreferenceManager.getDefaultSharedPreferences(this);
 
-        sortOption = mSharedPreferences.getString(getString(R.string.pref_sort_key),"popular");
+        sortOption = mSharedPreferences.getString(getString(R.string.pref_sort_key), "popular");
 
 
         updateMovies();
@@ -158,13 +156,12 @@ public class MovieListActivity extends AppCompatActivity implements LoaderManage
         mSharedPreferences = PreferenceManager.getDefaultSharedPreferences(this);
 
         // We retrieve foreground and background color value as a string
-        sortOption = mSharedPreferences.getString(getString(R.string.pref_sort_key),"popular");
+        sortOption = mSharedPreferences.getString(getString(R.string.pref_sort_key), "popular");
 
         // getMovies();
         requestMovies();
 
     }
-
 
 
     String addMovie(long movieId, String title, String image) {
@@ -175,13 +172,13 @@ public class MovieListActivity extends AppCompatActivity implements LoaderManage
         // First, check if the movieId exists in the db
         Cursor locationCursor = this.getContentResolver().query(
                 MovieContract.DetailEntry.CONTENT_URI,
-                new String[]{ MovieContract.DetailEntry.COLUMN_MOVIE_ID},
+                new String[]{MovieContract.DetailEntry.COLUMN_MOVIE_ID},
                 MovieContract.DetailEntry.COLUMN_MOVIE_ID + " = ?",
                 new String[]{id},
                 null);
 
         if (locationCursor.moveToFirst()) {
-            int movieIdIndex = locationCursor.getColumnIndex( MovieContract.DetailEntry.COLUMN_MOVIE_ID);
+            int movieIdIndex = locationCursor.getColumnIndex(MovieContract.DetailEntry.COLUMN_MOVIE_ID);
             movie_id = locationCursor.getString(movieIdIndex);
         } else {
             // Now that the content provider is set up, inserting rows of data is pretty simple.
@@ -214,14 +211,17 @@ public class MovieListActivity extends AppCompatActivity implements LoaderManage
         //http://api.themoviedb.org/3/movie/popular/?api_key=6d369d4e0676612d2d046b7f3e8424bd
         final String BASE_PATH = "http://api.themoviedb.org/3/movie/";
         final String sort_order = sortOption;
-        final String api_key = "?api_key=" + Config.API_KEY;;
+        final String api_key = "?api_key=" + Config.API_KEY;
+        ;
+
+        Log.e("SORT OPTION", sort_order);
+
 
         String original_url = BASE_PATH + sort_order + api_key;
         System.out.println("ORIGINAL URL >>>>>>>>" + original_url);
 
         // Instantiate the RequestQueue.
         RequestQueue queue = Volley.newRequestQueue(MovieListActivity.this);
-
 
 
         // Formulate the request and handle the response.
@@ -261,25 +261,23 @@ public class MovieListActivity extends AppCompatActivity implements LoaderManage
                                 String posterPath = IMAGE_BASE_PATH + image_size + movie_image;
 
 
-                                MovieImage movieImage = new MovieImage(movie_id, movie_name,posterPath);
+                                MovieImage movieImage = new MovieImage(movie_id, movie_name, posterPath);
                                 list.add(movieImage);
                                 Log.v("xxxxx-add", "adding movie: " + movie_name);
 
                                 movieImages.add(posterPath);
 
 
-
                                 loadImageBitmap(posterPath);
 
                                 //add movie to database
-                                addMovie(movie_id,movie_name,posterPath);
+                                addMovie(movie_id, movie_name, posterPath);
                             }
 
 
-
-                            for (MovieImage img:list) {
-                                Log.d("MOVIE ID: ",String.valueOf(img.getMovie_id()));
-                                Log.d("MOVIE NAME: ",img.getMovie_name());
+                            for (MovieImage img : list) {
+                                Log.d("MOVIE ID: ", String.valueOf(img.getMovie_id()));
+                                Log.d("MOVIE NAME: ", img.getMovie_name());
                                 Log.d("MOVIE IMAGE: ", img.getMovie_image());
 
                             }
@@ -300,7 +298,7 @@ public class MovieListActivity extends AppCompatActivity implements LoaderManage
                     @Override
                     public void onErrorResponse(VolleyError error) {
                         //other catches
-                        if(error instanceof NoConnectionError) {
+                        if (error instanceof NoConnectionError) {
                             //show dialog no net connection
                             Utils.showSuccessDialog(MovieListActivity.this, R.string.no_connection, R.string.net).show();
                         }
@@ -312,7 +310,7 @@ public class MovieListActivity extends AppCompatActivity implements LoaderManage
         queue.add(stringRequest);
     }
 
-    private void loadImageBitmap(String image_url){
+    private void loadImageBitmap(String image_url) {
 
         imageLoader.loadImage(image_url, new SimpleImageLoadingListener() {
             @Override
@@ -322,7 +320,7 @@ public class MovieListActivity extends AppCompatActivity implements LoaderManage
                 ByteArrayOutputStream byteArrayOS = new ByteArrayOutputStream();
                 loadedImage.compress(Bitmap.CompressFormat.JPEG, 100, byteArrayOS);
 
-                 encodedString = Base64.encodeToString(byteArrayOS.toByteArray(), Base64.DEFAULT);
+                encodedString = Base64.encodeToString(byteArrayOS.toByteArray(), Base64.DEFAULT);
             }
         });
 
@@ -338,25 +336,25 @@ public class MovieListActivity extends AppCompatActivity implements LoaderManage
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         int id = item.getItemId();
-        if (id==R.id.action_settings){
+        if (id == R.id.action_settings) {
             Intent intent = new Intent(this, SettingsActivity.class);
             startActivity(intent);
             return true;
         }
 
 
-        if (id==R.id.action_fav){
+        if (id == R.id.action_fav) {
             //if movies are available in the favoriteList
             //then show FavoritesActivity
 
 
             try {
-                if (Utils.getFavoriteMovies(this)!=null){
+                if (Utils.getFavoriteMovies(this) != null) {
                     Intent intent = new Intent(this, FavoriteListActivity.class);
                     startActivity(intent);
-                }else{
+                } else {
                     //inform user that no movies are added to favorites
-                    Utils.showSuccessDialog(this,R.string.fav,R.string.no_favorites).show();
+                    Utils.showSuccessDialog(this, R.string.fav, R.string.no_favorites).show();
                 }
             } catch (JSONException e) {
                 e.printStackTrace();
@@ -365,15 +363,34 @@ public class MovieListActivity extends AppCompatActivity implements LoaderManage
 
         }
 
+        if (id == R.id.action_favorites) {
+            //if movies are available in the favoriteList
+            //then show FavoritesActivity
+            Cursor c =
+                    this.getContentResolver().query(MovieContract.FavoriteEntry.CONTENT_URI,
+                            new String[]{MovieContract.FavoriteEntry._ID},
+                            null,
+                            null,
+                            null);
+            if (c.getCount() == 0) {
+                //inform user that no movies are added to favorites
+                Utils.showSuccessDialog(this, R.string.fav, R.string.no_favorites).show();
+            } else {
+                Intent intent = new Intent(this, MainCarousel.class);
+                startActivity(intent);
+            }
+
+
+        }
+
+
         return super.onOptionsItemSelected(item);
     }
 
     private void setupRecyclerView(RecyclerView recyclerView) {
-        mAdapter =  new MovieItemRecyclerViewAdapter(this, movieImages, list);
-        recyclerView.setAdapter(mAdapter);}
-
-
-
+        mAdapter = new MovieItemRecyclerViewAdapter(this, movieImages, list);
+        recyclerView.setAdapter(mAdapter);
+    }
 
 
     @Override
@@ -466,7 +483,6 @@ public class MovieListActivity extends AppCompatActivity implements LoaderManage
             });
 
 
-
         }
 
         @Override
@@ -492,6 +508,7 @@ public class MovieListActivity extends AppCompatActivity implements LoaderManage
                 mView = view;
                 mImageView = (ImageView) view.findViewById(R.id.img_movie);
                 mTitleView = (TextView) view.findViewById(R.id.txt_name);
+
             }
 
             @Override

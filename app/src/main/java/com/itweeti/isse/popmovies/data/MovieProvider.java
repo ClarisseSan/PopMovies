@@ -19,6 +19,8 @@ public class MovieProvider extends ContentProvider {
 
     private static final String LOG_TAG = MovieProvider.class.getSimpleName();
     private static final UriMatcher sUriMatcher = buildUriMatcher();
+
+
     private MovieHelper mOpenHelper;
 
 
@@ -31,6 +33,8 @@ public class MovieProvider extends ContentProvider {
 
     private static final int TRAILER = 5;
     private static final int REVIEWS = 6;
+    private static final int REVIEWS_WITH_ID = 7;
+    private static final int TRAILER_WITH_ID = 8;
 
 
 
@@ -53,9 +57,15 @@ public class MovieProvider extends ContentProvider {
         //URI for insert Trailer table
         //content://com.itweeti.isse.popmovies/trailer_tbl
         matcher.addURI(authority, MovieContract.TrailerEntry.TABLE_TRAILER, TRAILER);
+        matcher.addURI(authority, MovieContract.TrailerEntry.TABLE_TRAILER + "/#", TRAILER_WITH_ID);
 
         //URI for reviews
         matcher.addURI(authority, MovieContract.ReviewEntry.TABLE_REVIEW, REVIEWS);
+
+        matcher.addURI(authority, MovieContract.ReviewEntry.TABLE_REVIEW + "/#", REVIEWS_WITH_ID);
+
+
+
         return matcher;
     }
 
@@ -143,6 +153,19 @@ public class MovieProvider extends ContentProvider {
                 return retCursor;
             }
 
+            case TRAILER_WITH_ID: {
+                retCursor = mOpenHelper.getReadableDatabase().query(
+                        MovieContract.TrailerEntry.TABLE_TRAILER,
+                        projection,
+                        MovieContract.TrailerEntry.COLUMN_MOVIE_ID + " = ?",
+                        new String[]{String.valueOf(ContentUris.parseId(uri))},
+                        null,
+                        null,
+                        sortOrder);
+
+                return retCursor;
+            }
+
             case REVIEWS: {
                 //readableDatabase because you're ony gonna fetch data
                 retCursor = mOpenHelper.getReadableDatabase().query(
@@ -153,6 +176,19 @@ public class MovieProvider extends ContentProvider {
                         null,
                         null,
                         sortOrder);
+                return retCursor;
+            }
+
+            case REVIEWS_WITH_ID: {
+                retCursor = mOpenHelper.getReadableDatabase().query(
+                        MovieContract.ReviewEntry.TABLE_REVIEW,
+                        projection,
+                        MovieContract.ReviewEntry.COLUMN_MOVIE_ID + " = ?",
+                        new String[]{String.valueOf(ContentUris.parseId(uri))},
+                        null,
+                        null,
+                        sortOrder);
+
                 return retCursor;
             }
 
@@ -193,9 +229,19 @@ public class MovieProvider extends ContentProvider {
                 return MovieContract.TrailerEntry.CONTENT_DIR_TYPE;
             }
 
+            case TRAILER_WITH_ID:{
+                //return a favorite movie with the id
+                return MovieContract.TrailerEntry.CONTENT_ITEM_TYPE;
+            }
+
             case REVIEWS:{
                 //returns all reviews
                 return MovieContract.ReviewEntry.CONTENT_DIR_TYPE;
+            }
+
+            case REVIEWS_WITH_ID:{
+                //return a favorite movie with the id
+                return MovieContract.ReviewEntry.CONTENT_ITEM_TYPE;
             }
             default:{
                 throw new UnsupportedOperationException("Unknown uri: " + uri);
@@ -257,9 +303,6 @@ public class MovieProvider extends ContentProvider {
                 }
                 break;
             }
-
-
-
 
             default: {
                 throw new UnsupportedOperationException("Unknown uri: " + uri);
