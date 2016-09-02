@@ -590,6 +590,7 @@ public class MovieDetailFragment extends Fragment {
             //rating
             ratingBar = (RatingBar) rootView.findViewById(R.id.ratingBar);
 
+            //apply ratingBar color
             // For API >= 21
             Drawable progress = ratingBar.getProgressDrawable();
             DrawableCompat.setTint(progress, Color.YELLOW);
