@@ -3,11 +3,16 @@ package com.itweeti.isse.popmovies.fragment;
 import android.app.Activity;
 import android.content.Intent;
 import android.database.Cursor;
+import android.graphics.Color;
+import android.graphics.PorterDuff;
+import android.graphics.drawable.Drawable;
+import android.graphics.drawable.LayerDrawable;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.StrictMode;
 import android.support.design.widget.CollapsingToolbarLayout;
 import android.support.v4.app.Fragment;
+import android.support.v4.graphics.drawable.DrawableCompat;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -584,6 +589,17 @@ public class MovieDetailFragment extends Fragment {
 
             //rating
             ratingBar = (RatingBar) rootView.findViewById(R.id.ratingBar);
+
+            // For API >= 21
+            Drawable progress = ratingBar.getProgressDrawable();
+            DrawableCompat.setTint(progress, Color.YELLOW);
+            // For API < 21
+            LayerDrawable stars = (LayerDrawable) ratingBar.getProgressDrawable();
+            if (stars != null) {
+                stars.getDrawable(2).setColorFilter(Color.YELLOW, PorterDuff.Mode.SRC_ATOP);
+                stars.getDrawable(0).setColorFilter(Color.GRAY, PorterDuff.Mode.SRC_ATOP);
+                stars.getDrawable(1).setColorFilter(Color.WHITE, PorterDuff.Mode.SRC_ATOP);
+            }
 
             //trailer list
             trailerRecyclerView = (RecyclerView) rootView.findViewById(R.id.trailer_recyclerview);
