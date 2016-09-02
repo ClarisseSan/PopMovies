@@ -18,7 +18,6 @@ public class ReviewRecyclerViewAdapter extends RecyclerView.Adapter<ReviewRecycl
     private final OnListFragmentInteractionListener mListener;
 
 
-
     public ReviewRecyclerViewAdapter(List<Reviews> items, OnListFragmentInteractionListener listener) {
         reviewsList = items;
         mListener = listener;

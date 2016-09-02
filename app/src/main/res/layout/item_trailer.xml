@@ -1,12 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
-    android:paddingTop="5dp"
-    >
-
-
+    android:paddingTop="5dp">
 
 
     <android.support.v7.widget.CardView
@@ -20,31 +17,30 @@
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="horizontal"
-            android:background="@color/colorB6">
+            android:background="@color/colorB6"
+            android:orientation="horizontal">
 
 
-        <ImageView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:src="@mipmap/ic_play"
-            android:id="@+id/img_play"
-            android:layout_gravity="center_vertical"/>
+            <ImageView
+                android:id="@+id/img_play"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_vertical"
+                android:src="@mipmap/ic_play" />
 
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Trailer 1"
-            android:textAppearance="?android:attr/textAppearanceLarge"
-            android:textColor="@color/colorB3"
-            android:paddingLeft="15dp"
-            android:id="@+id/txt_trailer"
-            android:layout_gravity="center"/>
+            <TextView
+                android:id="@+id/txt_trailer"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:paddingLeft="15dp"
+                android:text="Trailer 1"
+                android:textAppearance="?android:attr/textAppearanceLarge"
+                android:textColor="@color/colorB3" />
 
 
         </LinearLayout>
     </android.support.v7.widget.CardView>
-
 
 
 </LinearLayout>

@@ -69,7 +69,6 @@ public class Movie implements Parcelable {
     }
 
 
-
     public void setTrailerList(List<Trailer> trailerList) {
 
         this.trailerList = trailerList;
@@ -154,7 +153,7 @@ public class Movie implements Parcelable {
         return movie_duration;
     }
 
-    public List<Trailer> getMovie_trailerList(){
+    public List<Trailer> getMovie_trailerList() {
         return trailerList;
     }
 }

@@ -25,7 +25,7 @@ import java.net.URL;
 
 public final class Utils {
 
-    private static final String FAVORITES = "favorites" ;
+    private static final String FAVORITES = "favorites";
 
 
     // Suppress default constructor for noninstantiability
@@ -125,7 +125,7 @@ public final class Utils {
         return encodedString;
     }
 
-    public static String  convertBitmapToBase64(Bitmap bitmap){
+    public static String convertBitmapToBase64(Bitmap bitmap) {
         String encodedString = "";
 
         ByteArrayOutputStream byteArrayOS = new ByteArrayOutputStream();
@@ -143,7 +143,6 @@ public final class Utils {
 
         return decodedByte;
     }
-
 
 
 }

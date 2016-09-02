@@ -24,7 +24,6 @@ public class TrailerRecyclerViewAdapter extends RecyclerView.Adapter<TrailerRecy
     }
 
 
-
     @Override
     public ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         View view = LayoutInflater.from(parent.getContext())
@@ -56,8 +55,8 @@ public class TrailerRecyclerViewAdapter extends RecyclerView.Adapter<TrailerRecy
 
     @Override
     public int getItemCount() {
-        if(trailerList!=null)
-        return trailerList.size();
+        if (trailerList != null)
+            return trailerList.size();
         return 0;
     }
 

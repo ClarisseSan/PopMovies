@@ -19,7 +19,6 @@ import com.itweeti.isse.popmovies.models.FavoriteMovie;
 
 import java.util.ArrayList;
 
-//BaseAdapter
 
 public class CoverFlowAdapter extends BaseAdapter {
 
@@ -89,7 +88,7 @@ public class CoverFlowAdapter extends BaseAdapter {
             @Override
             public void onClick(View v) {
 
-                        Intent i = new Intent(context, MovieDetailActivity.class)
+                Intent i = new Intent(context, MovieDetailActivity.class)
                         //pass the selected movie_id to the next Activity
                         .putExtra("flagData", 1)
                         .putExtra("movieId", movieList.get(position).getMovie_id())

@@ -58,7 +58,7 @@ import java.util.Vector;
  */
 public class MovieDetailActivity extends AppCompatActivity {
 
-    private static final String LOG_TAG = "MovieDetailActivity" ;
+    private static final String LOG_TAG = "MovieDetailActivity";
     short flagSave; //on/off for the mark as favorite button
     private String movieId;
     private int flagData;
@@ -78,7 +78,7 @@ public class MovieDetailActivity extends AppCompatActivity {
     private float vote_average;
 
 
-    private static final String STATE_ID = "movie_id" ;
+    private static final String STATE_ID = "movie_id";
     private static final String STATE_DATA = "flagDataType";
     private static final String STATE_TITLE = "title";
     private static final String STATE_YEAR = "year";
@@ -86,7 +86,7 @@ public class MovieDetailActivity extends AppCompatActivity {
     private static final String STATE_RATING = "rating";
     private static final String STATE_VOTE = "vote_ave";
     private static final String STATE_OVERVIEW = "overview";
-    private static final String STATE_POSTER ="poster" ;
+    private static final String STATE_POSTER = "poster";
 
     private List<Reviews> reviewList;
     private List<Trailer> movieTrailersList;
@@ -118,17 +118,16 @@ public class MovieDetailActivity extends AppCompatActivity {
             flagData = intent.getIntExtra("flagData", 0);
             Toast.makeText(this, LOG_TAG + " MY ID: " + movieId, Toast.LENGTH_SHORT).show();
 
-            if (flagData == 1){
+            if (flagData == 1) {
                 //from favorites get other extras from intent
                 mTitle = intent.getStringExtra("title");
                 mYear = intent.getStringExtra("year");
                 mDuration = intent.getStringExtra("duration");
                 mRating = intent.getStringExtra("rating");
-                vote_average = Float.parseFloat(mRating)/2;
+                vote_average = Float.parseFloat(mRating) / 2;
                 mOverview = intent.getStringExtra("overview");
 
                 //TODO: fetch mPoster, movieTrailersList, movieReviewList in database
-
 
 
             }
@@ -136,7 +135,7 @@ public class MovieDetailActivity extends AppCompatActivity {
         }
 
 
-        if(savedInstanceState!=null) {
+        if (savedInstanceState != null) {
             movieId = savedInstanceState.getString(STATE_ID);
             flagData = savedInstanceState.getInt(STATE_DATA);
             mTitle = savedInstanceState.getString(STATE_TITLE);
@@ -152,13 +151,12 @@ public class MovieDetailActivity extends AppCompatActivity {
         fab = (FloatingActionButton) findViewById(R.id.fab);
 
         try {
-            if(Utils.getFavoriteMovies(this)!=null){
+            if (Utils.getFavoriteMovies(this) != null) {
                 checkMovieID();
             }
         } catch (JSONException e) {
             e.printStackTrace();
         }
-
 
 
         fab.setOnClickListener(new View.OnClickListener() {
@@ -175,7 +173,7 @@ public class MovieDetailActivity extends AppCompatActivity {
                         try {
                             saveAsFavorite(view);
                             //save to sqlite database
-                            insertFavoriteToDb(Long.parseLong(movieId),mTitle, encodedString);
+                            insertFavoriteToDb(Long.parseLong(movieId), mTitle, encodedString);
                         } catch (JSONException e) {
                             e.printStackTrace();
                         }
@@ -186,7 +184,7 @@ public class MovieDetailActivity extends AppCompatActivity {
                     case 1:
 
 
-                        switch (flagData){
+                        switch (flagData) {
                             case 0:
                                 //flagData = 0 --> from popular movies Activty
                                 //if flag = 1 , then unhighlight the star...
@@ -214,9 +212,6 @@ public class MovieDetailActivity extends AppCompatActivity {
                 }
 
 
-
-
-
             }
         });
 
@@ -230,15 +225,15 @@ public class MovieDetailActivity extends AppCompatActivity {
         }
 
         //request data from moviedb.org using API call or from shared preferences
-        switch (flagData){
+        switch (flagData) {
             case 0:
                 requestMovieDetail(movieId);
                 requestMovieTrailer(movieId);
                 requestMovieReviews(movieId);
                 break;
-           // case 1:
-              //  getLocalData();
-               // break;
+            // case 1:
+            //  getLocalData();
+            // break;
         }
 
         //initiliaze image loader
@@ -273,20 +268,20 @@ public class MovieDetailActivity extends AppCompatActivity {
 
     }
 
-    private void deleteFavoriteinDB(long movieId){
+    private void deleteFavoriteinDB(long movieId) {
         String id = String.valueOf(movieId);
         String movie_id = "";
 
         // First, check if the movieId exists in the db
         Cursor locationCursor = this.getContentResolver().query(
                 MovieContract.FavoriteEntry.CONTENT_URI,
-                new String[]{ MovieContract.FavoriteEntry.COLUMN_MOVIE_ID},
+                new String[]{MovieContract.FavoriteEntry.COLUMN_MOVIE_ID},
                 MovieContract.FavoriteEntry.COLUMN_MOVIE_ID + " = ?",
                 new String[]{id},
                 null);
 
         if (locationCursor.moveToFirst()) {
-            int movieIdIndex = locationCursor.getColumnIndex( MovieContract.FavoriteEntry.COLUMN_MOVIE_ID);
+            int movieIdIndex = locationCursor.getColumnIndex(MovieContract.FavoriteEntry.COLUMN_MOVIE_ID);
             movie_id = locationCursor.getString(movieIdIndex);
 
             Uri uri = MovieContract.FavoriteEntry.buildFavoriteUri(movieId);
@@ -303,22 +298,21 @@ public class MovieDetailActivity extends AppCompatActivity {
     }
 
 
-
     //add movie_id, encoded_image to database
-    private void insertFavoriteToDb(long movieId, String title, String encodedString){
+    private void insertFavoriteToDb(long movieId, String title, String encodedString) {
         String id = String.valueOf(movieId);
         String movie_id = "";
 
         // First, check if the movieId exists in the db
         Cursor locationCursor = this.getContentResolver().query(
                 MovieContract.FavoriteEntry.CONTENT_URI,
-                new String[]{ MovieContract.FavoriteEntry.COLUMN_MOVIE_ID},
+                new String[]{MovieContract.FavoriteEntry.COLUMN_MOVIE_ID},
                 MovieContract.FavoriteEntry.COLUMN_MOVIE_ID + " = ?",
                 new String[]{id},
                 null);
 
         if (locationCursor.moveToFirst()) {
-            int movieIdIndex = locationCursor.getColumnIndex( MovieContract.FavoriteEntry.COLUMN_MOVIE_ID);
+            int movieIdIndex = locationCursor.getColumnIndex(MovieContract.FavoriteEntry.COLUMN_MOVIE_ID);
             movie_id = locationCursor.getString(movieIdIndex);
         } else {
             // Now that the content provider is set up, inserting rows of data is pretty simple.
@@ -345,7 +339,7 @@ public class MovieDetailActivity extends AppCompatActivity {
     }
 
 
-    private void addTrailers(long movieId, String num, String url){
+    private void addTrailers(long movieId, String num, String url) {
         String id = String.valueOf(movieId);
         String movie_id = "";
 
@@ -354,10 +348,10 @@ public class MovieDetailActivity extends AppCompatActivity {
                 MovieContract.TrailerEntry.CONTENT_URI,
                 null,
                 MovieContract.TrailerEntry.COLUMN_MOVIE_ID + " = ? AND " + MovieContract.TrailerEntry.COLUMN_TRAILER_URL + " = ? ",
-                new String[]{id,url},
+                new String[]{id, url},
                 null);
         if (cursor.moveToFirst()) {
-            int movieIdIndex = cursor.getColumnIndex( MovieContract.TrailerEntry.COLUMN_MOVIE_ID);
+            int movieIdIndex = cursor.getColumnIndex(MovieContract.TrailerEntry.COLUMN_MOVIE_ID);
             movie_id = cursor.getString(movieIdIndex);
         } else {
             // Now that the content provider is set up, inserting rows of data is pretty simple.
@@ -382,7 +376,7 @@ public class MovieDetailActivity extends AppCompatActivity {
 
     }
 
-    private void addReviews(long movieId, String author, String content){
+    private void addReviews(long movieId, String author, String content) {
         String id = String.valueOf(movieId);
         String movie_id = "";
 
@@ -391,10 +385,10 @@ public class MovieDetailActivity extends AppCompatActivity {
                 MovieContract.ReviewEntry.CONTENT_URI,
                 null,
                 MovieContract.ReviewEntry.COLUMN_MOVIE_ID + " = ? AND " + MovieContract.ReviewEntry.COLUMN_AUTHOR + " = ? ",
-                new String[]{id,author},
+                new String[]{id, author},
                 null);
         if (cursor.moveToFirst()) {
-            int movieIdIndex = cursor.getColumnIndex( MovieContract.ReviewEntry.COLUMN_MOVIE_ID);
+            int movieIdIndex = cursor.getColumnIndex(MovieContract.ReviewEntry.COLUMN_MOVIE_ID);
             movie_id = cursor.getString(movieIdIndex);
         } else {
             // Now that the content provider is set up, inserting rows of data is pretty simple.
@@ -437,10 +431,10 @@ public class MovieDetailActivity extends AppCompatActivity {
             int movieIdIndex = cursor.getColumnIndex(MovieContract.DetailEntry.COLUMN_MOVIE_ID);
             movie_id = cursor.getString(movieIdIndex);
 
-            int viewedIndex = cursor.getColumnIndex( MovieContract.DetailEntry.COLUMN_VIEWED);
+            int viewedIndex = cursor.getColumnIndex(MovieContract.DetailEntry.COLUMN_VIEWED);
             int viewed = cursor.getInt(viewedIndex);
 
-            if(viewed==0){
+            if (viewed == 0) {
                 //update
                 ContentValues movieValues = new ContentValues();
 
@@ -472,26 +466,25 @@ public class MovieDetailActivity extends AppCompatActivity {
         }
     }
 
-        private Bundle generateBundle() {
-            Bundle bundle = new Bundle();
-            bundle.putInt("flagData", flagData);
-            bundle.putString("movieId", movieId);
-            bundle.putString("title",mTitle);
-            bundle.putString("year", mYear);
-            bundle.putString("duration", mDuration);
-            bundle.putString("rating", mRating);
-            bundle.putFloat("vote_ave", vote_average);
-            bundle.putString("overview", mOverview);
-            bundle.putString("poster", mPoster);
-            bundle.putParcelableArrayList("review_list", (ArrayList<? extends Parcelable>) reviewList);
-            bundle.putParcelableArrayList("trailer_list", (ArrayList<? extends Parcelable>) movieTrailersList);
+    private Bundle generateBundle() {
+        Bundle bundle = new Bundle();
+        bundle.putInt("flagData", flagData);
+        bundle.putString("movieId", movieId);
+        bundle.putString("title", mTitle);
+        bundle.putString("year", mYear);
+        bundle.putString("duration", mDuration);
+        bundle.putString("rating", mRating);
+        bundle.putFloat("vote_ave", vote_average);
+        bundle.putString("overview", mOverview);
+        bundle.putString("poster", mPoster);
+        bundle.putParcelableArrayList("review_list", (ArrayList<? extends Parcelable>) reviewList);
+        bundle.putParcelableArrayList("trailer_list", (ArrayList<? extends Parcelable>) movieTrailersList);
 
-            return bundle;
-        }
+        return bundle;
+    }
 
 
-
-    private void loadImageBitmap(String image_url){
+    private void loadImageBitmap(String image_url) {
         imageLoader.loadImage(image_url, new SimpleImageLoadingListener() {
             @Override
             public void onLoadingComplete(String imageUri, View view, Bitmap loadedImage) {
@@ -506,7 +499,6 @@ public class MovieDetailActivity extends AppCompatActivity {
     }
 
 
-
     private void saveAsFavorite(View view) throws JSONException {
 
         //generate JSON(itemlist) so php can process it
@@ -516,7 +508,7 @@ public class MovieDetailActivity extends AppCompatActivity {
             item.put("movie_name", mTitle);
 
             //save as base64 image
-            item.put("movie_image",encodedString);
+            item.put("movie_image", encodedString);
             Log.e("BASE64=========>", encodedString);
 
             item.put("movie_overview", mOverview);
@@ -532,14 +524,14 @@ public class MovieDetailActivity extends AppCompatActivity {
             System.out.println("FAVORITE TRAILER SIZE " + size);
 
             //save favoriteMovie in a list
-            Utils.saveFavoriteMovies(this,item, view);
+            Utils.saveFavoriteMovies(this, item, view);
 
         } catch (JSONException e) {
             e.printStackTrace();
         }
     }
 
-    private JSONArray saveReviews(){
+    private JSONArray saveReviews() {
         //generate new JSON Array
         JSONArray reviews = new JSONArray();
 
@@ -548,9 +540,9 @@ public class MovieDetailActivity extends AppCompatActivity {
 
         //if reviews are available
 
-        if(reviewList.size()!=0){
+        if (reviewList.size() != 0) {
             //loop through the trailer list and save each item in the JSONArray
-            for (int i = 0; i < reviewList.size() ; i++) {
+            for (int i = 0; i < reviewList.size(); i++) {
                 author = reviewList.get(i).getAuthor();
                 content = reviewList.get(i).getContent();
 
@@ -570,7 +562,7 @@ public class MovieDetailActivity extends AppCompatActivity {
         }
 
 
-        if(reviewList.size()==0){
+        if (reviewList.size() == 0) {
 
             author = "No Reviews Available";
             content = " ";
@@ -593,12 +585,12 @@ public class MovieDetailActivity extends AppCompatActivity {
         return reviews;
     }
 
-    private JSONArray saveTrailers(){
+    private JSONArray saveTrailers() {
         //generate new JSON Array
         JSONArray trailers = new JSONArray();
 
         //loop through the trailer list and save each item in the JSONArray
-        for (int i = 0; i < movieTrailersList.size() ; i++) {
+        for (int i = 0; i < movieTrailersList.size(); i++) {
             String trailer_num = movieTrailersList.get(i).getTrailerNumber();
             String trailer_url = movieTrailersList.get(i).getTrailerUrl();
 
@@ -623,7 +615,7 @@ public class MovieDetailActivity extends AppCompatActivity {
         mYear = intent.getStringExtra("year");
         mDuration = intent.getStringExtra("duration");
         mRating = intent.getStringExtra("rating");
-        vote_average = Float.parseFloat(mRating)/2;
+        vote_average = Float.parseFloat(mRating) / 2;
         mOverview = intent.getStringExtra("overview");
         mPoster = intent.getStringExtra("poster");
 
@@ -652,7 +644,6 @@ public class MovieDetailActivity extends AppCompatActivity {
     }
 
 
-
     @Override
     protected void onRestoreInstanceState(Bundle savedInstanceState) {
         super.onRestoreInstanceState(savedInstanceState);
@@ -670,7 +661,7 @@ public class MovieDetailActivity extends AppCompatActivity {
     }
 
 
-    private void requestMovieReviews(String movieId){
+    private void requestMovieReviews(String movieId) {
         //http://api.themoviedb.org/3/reviews/293660/videos?api_key=6d369d4e0676612d2d046b7f3e8424bd
 
         reviewList = new ArrayList<>();
@@ -699,7 +690,7 @@ public class MovieDetailActivity extends AppCompatActivity {
                             JSONArray results = jsonObject.getJSONArray("results");
 
 
-                            if (results!=null){
+                            if (results != null) {
 
 
                                 for (int i = 0; i < results.length(); i++) {
@@ -717,17 +708,17 @@ public class MovieDetailActivity extends AppCompatActivity {
                                 }
 
                                 //==============================LOGS=================================/
-                                if (reviewList!=null){
-                                    for (Reviews review:reviewList) {
-                                        Log.d("AUTHOR: ",String.valueOf(review.getAuthor()));
-                                        Log.d("CONTENT: ",review.getContent());
+                                if (reviewList != null) {
+                                    for (Reviews review : reviewList) {
+                                        Log.d("AUTHOR: ", String.valueOf(review.getAuthor()));
+                                        Log.d("CONTENT: ", review.getContent());
                                     }
                                 }
                                 //====================================================================/
 
                             }
 
-                            if(reviewList.size()==0){
+                            if (reviewList.size() == 0) {
                                 String author = "No Reviews Available";
                                 String content = " ";
 
@@ -745,7 +736,7 @@ public class MovieDetailActivity extends AppCompatActivity {
                     @Override
                     public void onErrorResponse(VolleyError error) {
                         //other catches
-                        if(error instanceof NoConnectionError) {
+                        if (error instanceof NoConnectionError) {
                             //show dialog no net connection
                             Utils.showSuccessDialog(MovieDetailActivity.this, R.string.no_connection, R.string.net).show();
                         }
@@ -801,11 +792,11 @@ public class MovieDetailActivity extends AppCompatActivity {
                             Log.v("TITLE:>>>>>>>>>>>> ", mTitle);
                             Log.v("mYear:>>>>>>>>>>>> ", mYear);
                             Log.v("mDuration:>>>>>>>>>>> ", mDuration);
-                            Log.v("mRating:>>>>>>>>>>>>>> ",mRating);
-                            Log.v("mOverview:>>>>>>>>>>>> ",mOverview);
+                            Log.v("mRating:>>>>>>>>>>>>>> ", mRating);
+                            Log.v("mOverview:>>>>>>>>>>>> ", mOverview);
                             Log.v("mPoster:>>>>>>>>>>>>>> ", mPoster);
 
-                            updateTableDetail(Long.parseLong(id),mTitle,mYear,mDuration,mRating,mOverview,mPoster);
+                            updateTableDetail(Long.parseLong(id), mTitle, mYear, mDuration, mRating, mOverview, mPoster);
 
                             loadImageBitmap(mPoster);
 
@@ -818,7 +809,7 @@ public class MovieDetailActivity extends AppCompatActivity {
                     @Override
                     public void onErrorResponse(VolleyError error) {
                         //other catches
-                        if(error instanceof NoConnectionError) {
+                        if (error instanceof NoConnectionError) {
                             //show dialog no net connection
                             Utils.showSuccessDialog(MovieDetailActivity.this, R.string.no_connection, R.string.net).show();
                         }
@@ -830,7 +821,7 @@ public class MovieDetailActivity extends AppCompatActivity {
         queue.add(stringRequest);
     }
 
-    private void requestMovieTrailer(final String movieId){
+    private void requestMovieTrailer(final String movieId) {
         //http://api.themoviedb.org/3/movie/246655/videos?api_key=6d369d4e0676612d2d046b7f3e8424bd
         movieTrailersList = new ArrayList<>();
 
@@ -864,8 +855,8 @@ public class MovieDetailActivity extends AppCompatActivity {
                                 JSONObject obj = results.getJSONObject(i);
                                 String trailer_key = obj.getString("key");
                                 //String youtube_trailer = "https://www.youtube.com/watch?v=" + trailer_key;
-                                String youtube_trailer =  trailer_key;
-                                String trailer_num = "Trailer " + (i+1);
+                                String youtube_trailer = trailer_key;
+                                String trailer_num = "Trailer " + (i + 1);
 
                                 System.out.println("TRAILER NUMBER --------->" + trailer_num);
                                 System.out.println("TRAILER URL --------->" + youtube_trailer);
@@ -876,13 +867,12 @@ public class MovieDetailActivity extends AppCompatActivity {
                                 movieTrailersList.add(trailer);
 
                                 //add to database
-                                addTrailers(Long.parseLong(id),trailer_num, youtube_trailer);
+                                addTrailers(Long.parseLong(id), trailer_num, youtube_trailer);
 
                             }
 
 
-
-                            for (Trailer trailer:movieTrailersList
+                            for (Trailer trailer : movieTrailersList
                                     ) {
                                 System.out.println("TRAILER NUMBER-----------> " + trailer.getTrailerNumber());
 
@@ -899,7 +889,7 @@ public class MovieDetailActivity extends AppCompatActivity {
                     @Override
                     public void onErrorResponse(VolleyError error) {
                         //other catches
-                        if(error instanceof NoConnectionError) {
+                        if (error instanceof NoConnectionError) {
                             //show dialog no net connection
                             Utils.showSuccessDialog(MovieDetailActivity.this, R.string.no_connection, R.string.net).show();
                         }
@@ -916,7 +906,8 @@ public class MovieDetailActivity extends AppCompatActivity {
 
         //inflate the menu; this adds item form the action bar
 
-        getMenuInflater().inflate(R.menu.menu_movie_detail,menu);;
+        getMenuInflater().inflate(R.menu.menu_movie_detail, menu);
+        ;
         //retrieve the share menu item
         MenuItem menuItem = menu.findItem(R.id.action_share);
 
@@ -926,19 +917,19 @@ public class MovieDetailActivity extends AppCompatActivity {
 
         //attach an intent to this ShareActionProvider. You can update it anytime
         //like when the users select a pice of data they might like to share
-        if (mShareActionProvider!=null){
+        if (mShareActionProvider != null) {
 
             //first trailer to send at share intent
-            if (movieTrailersList.size()!=0){
+            if (movieTrailersList.size() != 0) {
                 first_trailer_url = mTitle + ": https://www.youtube.com/watch?v=" + movieTrailersList.get(0).getTrailerUrl();
-            }else{
+            } else {
                 //no trailer available, return movie name instead
                 first_trailer_url = mTitle;
             }
 
             mShareActionProvider.setShareIntent(createShareMovieIntent());
-        }else{
-            Log.e(LOG_TAG,"share action provider is null");
+        } else {
+            Log.e(LOG_TAG, "share action provider is null");
         }
 
         return true;
@@ -953,7 +944,6 @@ public class MovieDetailActivity extends AppCompatActivity {
 
         return shareIntent;
     }
-
 
 
     private ArrayList<String> getListOfFavMovies() {
@@ -1001,8 +991,6 @@ public class MovieDetailActivity extends AppCompatActivity {
             fab.setImageResource(R.mipmap.ic_action_unfav);
         }
     }
-
-
 
 
     @Override

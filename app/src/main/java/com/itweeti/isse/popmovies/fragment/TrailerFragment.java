@@ -22,14 +22,14 @@ import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
-import com.itweeti.isse.popmovies.R;
-import com.itweeti.isse.popmovies.utils.Config;
-import com.itweeti.isse.popmovies.views.adapters.TrailerRecyclerViewAdapter;
-import com.itweeti.isse.popmovies.models.Trailer;
-import com.itweeti.isse.popmovies.utils.Utils;
 import com.google.android.youtube.player.YouTubeApiServiceUtil;
 import com.google.android.youtube.player.YouTubeInitializationResult;
 import com.google.android.youtube.player.YouTubeStandalonePlayer;
+import com.itweeti.isse.popmovies.R;
+import com.itweeti.isse.popmovies.models.Trailer;
+import com.itweeti.isse.popmovies.utils.Config;
+import com.itweeti.isse.popmovies.utils.Utils;
+import com.itweeti.isse.popmovies.views.adapters.TrailerRecyclerViewAdapter;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -43,8 +43,6 @@ import java.util.List;
  * <p/>
  * Activities containing this fragment MUST implement the {@link OnListFragmentInteractionListener}
  * interface.
- *
- *
  */
 public class TrailerFragment extends Fragment {
 
@@ -96,7 +94,7 @@ public class TrailerFragment extends Fragment {
 
         if (intent != null) {
             movieId = intent.getStringExtra("movieId");
-            flagDataType = intent.getIntExtra("flagData",0);
+            flagDataType = intent.getIntExtra("flagData", 0);
         }
 
         if (getArguments() != null) {
@@ -107,9 +105,9 @@ public class TrailerFragment extends Fragment {
 
         }
 
-        if(savedInstanceState!=null) {
+        if (savedInstanceState != null) {
             movieId = savedInstanceState.getString("movieId");
-            Log.v("savedInstanceState", "movieid = "+ movieId);
+            Log.v("savedInstanceState", "movieid = " + movieId);
         }
 
         //Check for any issues
@@ -120,11 +118,10 @@ public class TrailerFragment extends Fragment {
             result.getErrorDialog(getActivity(), 0).show();
         }
 
-        if(flagDataType==0) {
+        if (flagDataType == 0) {
             //call trailers from API
             requestMovieTrailer(movieId);
-        }
-        else {
+        } else {
             Log.v("xxxxxxxx", "trailers not getting from internet");
         }
 
@@ -139,7 +136,7 @@ public class TrailerFragment extends Fragment {
         // Set the adapter
         if (view instanceof RecyclerView) {
             Context context = view.getContext();
-             recyclerView = (RecyclerView) view;
+            recyclerView = (RecyclerView) view;
             if (mColumnCount <= 1) {
                 recyclerView.setLayoutManager(new LinearLayoutManager(context));
             } else {
@@ -174,7 +171,7 @@ public class TrailerFragment extends Fragment {
         List<Trailer> trailers = intent.getParcelableArrayListExtra("trailers");
 
         movieTrailersList = trailers;
-        for (Trailer t:movieTrailersList) {
+        for (Trailer t : movieTrailersList) {
             System.out.println("TRAILER_URL===========> local" + t.getTrailerNumber());
         }
     }
@@ -215,7 +212,7 @@ public class TrailerFragment extends Fragment {
 
     /**
      * Launch Youtube to watch  URL
-    */
+     */
     private void launchYoutube(String api_key, String video_id) {
 
         Intent intent = YouTubeStandalonePlayer.createVideoIntent(getActivity(), api_key, video_id);
@@ -223,7 +220,7 @@ public class TrailerFragment extends Fragment {
 
     }
 
-    private void requestMovieTrailer(String movieId){
+    private void requestMovieTrailer(String movieId) {
 
 
         movieTrailersList = new ArrayList<>();
@@ -258,8 +255,8 @@ public class TrailerFragment extends Fragment {
                                 JSONObject obj = results.getJSONObject(i);
                                 String trailer_key = obj.getString("key");
                                 //String youtube_trailer = "https://www.youtube.com/watch?v=" + trailer_key;
-                                String youtube_trailer =  trailer_key;
-                                String trailer_num = "Trailer " + (i+1);
+                                String youtube_trailer = trailer_key;
+                                String trailer_num = "Trailer " + (i + 1);
 
                                 System.out.println("TRAILER NUMBER --------->" + trailer_num);
                                 System.out.println("TRAILER URL --------->" + youtube_trailer);
@@ -271,17 +268,17 @@ public class TrailerFragment extends Fragment {
 
                             }
 
-                            if (movieTrailersList!=null){
-                                for (Trailer trailer:movieTrailersList
+                            if (movieTrailersList != null) {
+                                for (Trailer trailer : movieTrailersList
                                         ) {
                                     System.out.println("TRAILER NUMBER-----------> " + trailer.getTrailerNumber());
                                 }
 
-                            recyclerView.getAdapter().notifyDataSetChanged();
+                                recyclerView.getAdapter().notifyDataSetChanged();
 
-                        }else {
-                            System.out.println(R.string.no_trailers);
-                        }
+                            } else {
+                                System.out.println(R.string.no_trailers);
+                            }
 
                             trailerListAdapter.setItemList(movieTrailersList);
                             trailerListAdapter.notifyDataSetChanged();
@@ -296,7 +293,7 @@ public class TrailerFragment extends Fragment {
                     @Override
                     public void onErrorResponse(VolleyError error) {
                         //other catches
-                        if(error instanceof NoConnectionError) {
+                        if (error instanceof NoConnectionError) {
                             //show dialog no net connection
                             Utils.showSuccessDialog(getContext(), R.string.no_connection, R.string.net).show();
                         }
@@ -307,7 +304,7 @@ public class TrailerFragment extends Fragment {
         // Add the request to the RequestQueue.
         queue.add(stringRequest);
 
-        trailerListAdapter = new TrailerRecyclerViewAdapter(movieTrailersList,mListener);
+        trailerListAdapter = new TrailerRecyclerViewAdapter(movieTrailersList, mListener);
     }
 
     public interface ClickListener {
@@ -358,7 +355,6 @@ public class TrailerFragment extends Fragment {
 
         }
     }
-
 
 
 }

@@ -50,7 +50,7 @@ public class MainCarousel extends AppCompatActivity implements LoaderManager.Loa
     // must change.
     static final int COL_MOVIE_ID = 1;
     static final int COL_MOVIE_TITLE = 2;
-    static final int COL_MOVIE_YEAR= 3;
+    static final int COL_MOVIE_YEAR = 3;
     static final int COL_MOVIE_DURATION = 4;
     static final int COL_MOVIE_RATING = 5;
     static final int COL_MOVIE_OVERVIEW = 6;
@@ -76,10 +76,9 @@ public class MainCarousel extends AppCompatActivity implements LoaderManager.Loa
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
 
 
-
                 // CursorAdapter returns a cursor at the correct position for getItem(), or null
                 // if it cannot seek to that position.
-                Cursor cursor = (Cursor)  parent.getItemAtPosition(position);
+                Cursor cursor = (Cursor) parent.getItemAtPosition(position);
                 if (cursor != null) {
 
                     Intent i = new Intent(MainCarousel.this, MovieDetailActivity.class)
@@ -93,7 +92,6 @@ public class MainCarousel extends AppCompatActivity implements LoaderManager.Loa
                             .putExtra("duration", cursor.getString(COL_MOVIE_DURATION));
 
                     MainCarousel.this.startActivity(i);
-
 
 
                 }
@@ -136,7 +134,6 @@ public class MainCarousel extends AppCompatActivity implements LoaderManager.Loa
     private void displayFavoriteMovies() {
 
 
-
         list = new ArrayList<>();
 
         try {
@@ -160,7 +157,7 @@ public class MainCarousel extends AppCompatActivity implements LoaderManager.Loa
                 JSONArray reviews = obj.getJSONArray("movie_reviews");
 
                 //FETCH TRAIlERS
-                if (trailers.length()>0){
+                if (trailers.length() > 0) {
                     //if there are trailers available
                     movieTrailersList = new ArrayList<>();
                     for (int j = 0; j < trailers.length(); j++) {
@@ -178,7 +175,7 @@ public class MainCarousel extends AppCompatActivity implements LoaderManager.Loa
                 }
 
                 //FETCH REVIEWS
-                if (reviews.length()>=0){
+                if (reviews.length() >= 0) {
                     //if there are trailers available
                     movieReviewsList = new ArrayList<>();
                     for (int j = 0; j < reviews.length(); j++) {
@@ -199,14 +196,14 @@ public class MainCarousel extends AppCompatActivity implements LoaderManager.Loa
                 System.out.println("TRAILER SIZE---------->" + movieTrailersList.size());
 
                 System.out.println("MOVIE NAME = " + movie_name);
-                for (Trailer t:movieTrailersList
+                for (Trailer t : movieTrailersList
                         ) {
                     System.out.println("TRAILER: " + t.getTrailerUrl());
                 }
                 //**************************//
 
 
-                FavoriteMovie fav = new FavoriteMovie(movie_id,movie_name,movie_image,movie_overview,movie_date,movie_vote,movie_duration, movieTrailersList, movieReviewsList);
+                FavoriteMovie fav = new FavoriteMovie(movie_id, movie_name, movie_image, movie_overview, movie_date, movie_vote, movie_duration, movieTrailersList, movieReviewsList);
                 list.add(fav);
 
                 System.out.println("FAVORITE MOVIES SIZE---------> " + list.size());

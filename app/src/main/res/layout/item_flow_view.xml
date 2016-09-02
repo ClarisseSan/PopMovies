@@ -6,19 +6,19 @@
 
     <ImageView
         android:id="@+id/image"
-        android:contentDescription="@string/app_name"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
+        android:contentDescription="@string/app_name"
         android:scaleType="centerCrop"
-        android:src="@drawable/ic_error"/>
+        android:src="@drawable/ic_error" />
 
     <TextView
         android:id="@+id/name"
-        android:hint="text "
-        android:layout_gravity="bottom"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:layout_gravity="bottom"
         android:gravity="center"
+        android:hint="text "
         android:textAppearance="?android:attr/textAppearanceSmallInverse" />
 
 </FrameLayout>

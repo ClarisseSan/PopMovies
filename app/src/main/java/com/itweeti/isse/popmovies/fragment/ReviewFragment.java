@@ -20,10 +20,10 @@ import com.android.volley.VolleyError;
 import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
 import com.itweeti.isse.popmovies.R;
-import com.itweeti.isse.popmovies.utils.Config;
-import com.itweeti.isse.popmovies.views.adapters.ReviewRecyclerViewAdapter;
 import com.itweeti.isse.popmovies.models.Reviews;
+import com.itweeti.isse.popmovies.utils.Config;
 import com.itweeti.isse.popmovies.utils.Utils;
+import com.itweeti.isse.popmovies.views.adapters.ReviewRecyclerViewAdapter;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -82,7 +82,7 @@ public class ReviewFragment extends Fragment {
 
         if (intent != null) {
             movieId = intent.getStringExtra("movieId");
-            flagDataType = intent.getIntExtra("flagData",0);
+            flagDataType = intent.getIntExtra("flagData", 0);
         }
 
         if (getArguments() != null) {
@@ -94,17 +94,16 @@ public class ReviewFragment extends Fragment {
             movieReviewList = reviews;
         }
 
-        if(savedInstanceState!=null) {
+        if (savedInstanceState != null) {
             movieId = savedInstanceState.getString("movieId");
-            Log.v("savedInstanceState", "movieid = "+ movieId);
+            Log.v("savedInstanceState", "movieid = " + movieId);
         }
 
 
-        if(flagDataType==0) {
+        if (flagDataType == 0) {
             //call trailers from API
             requestMovieReviews(movieId);
-        }
-        else {
+        } else {
             Log.v("xxxxxxxx", "trailers not getting from internet");
         }
 
@@ -181,7 +180,7 @@ public class ReviewFragment extends Fragment {
         void onListFragmentInteraction(Reviews review);
     }
 
-    private void requestMovieReviews(String movieId){
+    private void requestMovieReviews(String movieId) {
         //http://api.themoviedb.org/3/reviews/293660/videos?api_key=6d369d4e0676612d2d046b7f3e8424bd
 
         movieReviewList = new ArrayList<>();
@@ -211,7 +210,7 @@ public class ReviewFragment extends Fragment {
                             String author = "";
                             String content = "";
 
-                            if (results!=null){
+                            if (results != null) {
                                 for (int i = 0; i < results.length(); i++) {
 
                                     JSONObject obj = results.getJSONObject(i);
@@ -229,15 +228,15 @@ public class ReviewFragment extends Fragment {
                             //==============================LOGS=================================/
 
 
-                            if (movieReviewList!=null){
-                                for (Reviews review:movieReviewList) {
+                            if (movieReviewList != null) {
+                                for (Reviews review : movieReviewList) {
                                     Log.d("AUTHOR: ", String.valueOf(review.getAuthor()));
-                                    Log.d("CONTENT: ",review.getContent());
+                                    Log.d("CONTENT: ", review.getContent());
                                 }
                             }
                             //====================================================================/
 
-                            if(movieReviewList.size()==0){
+                            if (movieReviewList.size() == 0) {
                                 author = "No Reviews Available";
                                 content = " ";
 
@@ -254,7 +253,6 @@ public class ReviewFragment extends Fragment {
                             reviewListAdapter.notifyDataSetChanged();
 
 
-
                         } catch (JSONException e) {
                             e.printStackTrace();
                         }
@@ -264,7 +262,7 @@ public class ReviewFragment extends Fragment {
                     @Override
                     public void onErrorResponse(VolleyError error) {
                         //other catches
-                        if(error instanceof NoConnectionError) {
+                        if (error instanceof NoConnectionError) {
                             //show dialog no net connection
                             Utils.showSuccessDialog(getContext(), R.string.no_connection, R.string.net).show();
                         }
@@ -275,7 +273,7 @@ public class ReviewFragment extends Fragment {
         // Add the request to the RequestQueue.
         queue.add(stringRequest);
 
-        reviewListAdapter = new ReviewRecyclerViewAdapter(movieReviewList,mListener);
+        reviewListAdapter = new ReviewRecyclerViewAdapter(movieReviewList, mListener);
 
 
     }

@@ -62,7 +62,7 @@ public class MovieCursorAdapter extends CursorAdapter {
         viewHolder.imgMovieImage.setImageBitmap(decodeBase64Image(image));
     }
 
-    private Bitmap decodeBase64Image(String encodedImage ) {
+    private Bitmap decodeBase64Image(String encodedImage) {
         byte[] decodedString = Base64.decode(encodedImage, Base64.DEFAULT);
         Bitmap decodedByte = BitmapFactory.decodeByteArray(decodedString, 0, decodedString.length);
 

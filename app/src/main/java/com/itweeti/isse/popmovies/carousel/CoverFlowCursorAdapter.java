@@ -65,13 +65,12 @@ public class CoverFlowCursorAdapter extends CursorAdapter {
 
     }
 
-        private Bitmap decodeBase64Image(String encodedImage ) {
-            byte[] decodedString = Base64.decode(encodedImage, Base64.DEFAULT);
-            Bitmap decodedByte = BitmapFactory.decodeByteArray(decodedString, 0, decodedString.length);
+    private Bitmap decodeBase64Image(String encodedImage) {
+        byte[] decodedString = Base64.decode(encodedImage, Base64.DEFAULT);
+        Bitmap decodedByte = BitmapFactory.decodeByteArray(decodedString, 0, decodedString.length);
 
-            return decodedByte;
-        }
-
+        return decodedByte;
+    }
 
 
     private static class ViewHolder {

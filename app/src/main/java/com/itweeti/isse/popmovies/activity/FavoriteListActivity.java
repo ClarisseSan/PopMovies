@@ -1,7 +1,6 @@
 package com.itweeti.isse.popmovies.activity;
 
 
-
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -194,7 +193,6 @@ public class FavoriteListActivity extends AppCompatActivity {
             }
 
 
-
         } catch (JSONException e) {
             e.printStackTrace();
             Log.e("ERROR", e.getMessage());
@@ -294,10 +292,10 @@ public class FavoriteListActivity extends AppCompatActivity {
                                 .putExtra("year", holder.mItem.getMovie_date())
                                 .putExtra("rating", holder.mItem.getMovie_vote())
                                 .putExtra("overview", holder.mItem.getMovie_overview())
-                               // .putExtra("poster", holder.mItem.getMovie_image())
-                                .putExtra("duration",holder.mItem.getMovie_duration());
-                                //.putParcelableArrayListExtra("trailers", (ArrayList<? extends Parcelable>) holder.mItem.getMovie_trailerList())
-                               // .putParcelableArrayListExtra("reviews", (ArrayList<? extends Parcelable>) holder.mItem.getReviewsList());
+                                // .putExtra("poster", holder.mItem.getMovie_image())
+                                .putExtra("duration", holder.mItem.getMovie_duration());
+                        //.putParcelableArrayListExtra("trailers", (ArrayList<? extends Parcelable>) holder.mItem.getMovie_trailerList())
+                        // .putParcelableArrayListExtra("reviews", (ArrayList<? extends Parcelable>) holder.mItem.getReviewsList());
 
                         context.startActivity(intent);
                     }
