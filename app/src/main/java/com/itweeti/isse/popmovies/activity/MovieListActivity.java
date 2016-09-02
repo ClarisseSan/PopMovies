@@ -104,8 +104,7 @@ public class MovieListActivity extends AppCompatActivity implements LoaderManage
             toolbar.setElevation(0f);
         }
 
-        //initiliaze image loader
-
+        //initialize image loader
         if (imageLoader == null) {
             imageLoader = ImageLoader.getInstance();
             imageLoader.init(ImageLoaderConfiguration.createDefault(this));
@@ -115,7 +114,7 @@ public class MovieListActivity extends AppCompatActivity implements LoaderManage
         recyclerView = (RecyclerView) findViewById(R.id.movie_list);
         recyclerView.setLayoutManager(new GridLayoutManager(this, 2));
 
-
+        //add spacing
         int spanCount = 2; // 2 columns
         int spacing = 20; // 20px
         boolean includeEdge = false;
@@ -190,6 +189,7 @@ public class MovieListActivity extends AppCompatActivity implements LoaderManage
             movieValues.put(MovieContract.DetailEntry.COLUMN_MOVIE_ID, id);
             movieValues.put(MovieContract.DetailEntry.COLUMN_TITLE, title);
             movieValues.put(MovieContract.DetailEntry.COLUMN_POSTER, image);
+
             // Finally, insert location data into the database.
             Uri insertedUri = this.getContentResolver().insert(
                     MovieContract.DetailEntry.CONTENT_URI,
@@ -447,6 +447,9 @@ public class MovieListActivity extends AppCompatActivity implements LoaderManage
                     .error(R.drawable.ic_error)
                     .placeholder(R.drawable.ic_loading)
                     .into(holder.mImageView);
+
+            //set content description for blind
+            //holder.mImageView.setContentDescription(movieImages.get(position).getMovie_name());
 
             //set movie name to textView
             holder.mTitleView.setText(movieImages.get(position).getMovie_name());

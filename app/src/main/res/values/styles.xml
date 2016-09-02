@@ -32,4 +32,8 @@
         <item name="android:height">56dp</item>
     </style>
 
+
+    <style name="MovieListStyle">
+     </style>
+
 </resources>
