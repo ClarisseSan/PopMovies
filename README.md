@@ -9,12 +9,9 @@ An app that allows users to discover the most popular movies and highest rated m
 `public static final String API_KEY = "..."`
 
 ## SCREENSHOTS
-![screenshot_2016-09-18-17-34-41](https://cloud.githubusercontent.com/assets/16929740/18614709/a5388656-7dc6-11e6-95cc-04555d7a7085.png)
-![screenshot_2016-09-18-17-34-28](https://cloud.githubusercontent.com/assets/16929740/18614710/a87186b0-7dc6-11e6-8d3c-75d04da656dd.png)
-![screenshot_2016-09-18-17-35-14](https://cloud.githubusercontent.com/assets/16929740/18614708/a0820b6e-7dc6-11e6-86fa-95e8e26d12d1.png)
-
-
-
+<img src="https://cloud.githubusercontent.com/assets/16929740/18614710/a87186b0-7dc6-11e6-8d3c-75d04da656dd.png" width="450" height="800" >
+<img src="https://cloud.githubusercontent.com/assets/16929740/18614709/a5388656-7dc6-11e6-95cc-04555d7a7085.png" width="450" height="800" >
+<img src="https://cloud.githubusercontent.com/assets/16929740/18614708/a0820b6e-7dc6-11e6-86fa-95e8e26d12d1.png" width="900" height="600" >
 
 
 
